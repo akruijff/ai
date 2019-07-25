@@ -27,7 +27,7 @@ public class UnmodifiableNeuron
     }
 
     @Override
-    public Double output() {
+    public double output() {
         return adaptee.output();
     }
 

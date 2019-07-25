@@ -31,10 +31,10 @@ public class InputNeuronTest {
 
     @Test
     public void setOutput() {
-        Double expected = 1d;
+        double expected = 1d;
         n.setOutput(expected);
-        Double actual = n.output();
-        assertEquals(expected, actual);
+        double actual = n.output();
+        assertEquals(expected, actual, 0.1d);
     }
 
     @Test

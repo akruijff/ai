@@ -16,13 +16,13 @@ public class NeuronStub
         implements Neuron {
 
     private final String id;
-    private final Double value;
+    private final double value;
 
     public NeuronStub(String id) {
         this(id, 0d);
     }
 
-    public NeuronStub(String id, Double value) {
+    public NeuronStub(String id, double value) {
         this.id = id;
         this.value = value;
     }
@@ -33,7 +33,7 @@ public class NeuronStub
     }
 
     @Override
-    public Double output() {
+    public double output() {
         return value;
     }
 

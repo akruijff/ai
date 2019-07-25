@@ -55,7 +55,7 @@ public abstract class AbstractNeuron
     }
 
     @Override
-    public Double output() {
+    public double output() {
         Double sum = summing.apply(inputConnections);
         return activating.apply(sum);
     }

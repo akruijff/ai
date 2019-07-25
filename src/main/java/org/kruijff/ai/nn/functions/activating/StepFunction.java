@@ -10,7 +10,7 @@ import org.kruijff.ai.nn.functions.ActivationFunction;
 public class StepFunction
         implements ActivationFunction {
 
-    private Double threshold;
+    private double threshold;
     private Double high;
     private Double low;
 
@@ -18,11 +18,11 @@ public class StepFunction
         this(.5d);
     }
 
-    public StepFunction(Double treshold) {
+    public StepFunction(double treshold) {
         this(treshold, 1d, 0d);
     }
 
-    public StepFunction(Double treshold, Double high, Double low) {
+    public StepFunction(double treshold, double high, double low) {
         this.threshold = treshold;
         this.high = high;
         this.low = low;

@@ -10,7 +10,7 @@ import org.kruijff.ai.nn.functions.ActivationFunction;
 
 public interface Neuron {
 
-    public Double output();
+    public double output();
 
     public List<Connection> inputConnections();
 

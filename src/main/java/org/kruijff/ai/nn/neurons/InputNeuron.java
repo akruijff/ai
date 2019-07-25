@@ -11,18 +11,18 @@ import org.kruijff.ai.nn.NeuronVisitor;
 public class InputNeuron
         extends AbstractNeuron {
 
-    private Double output;
+    private double output;
 
     public InputNeuron(String id, Network network) {
         super(id, network);
     }
 
     @Override
-    public Double output() {
+    public double output() {
         return output;
     }
 
-    public void setOutput(Double output) {
+    public void setOutput(double output) {
         this.output = output;
     }
 
