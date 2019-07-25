@@ -11,7 +11,7 @@ import java.util.Map;
 import org.kruijff.ai.nn.AbstractNetwork;
 import org.kruijff.ai.nn.Neuron;
 import org.kruijff.ai.nn.functions.LossFunction;
-import org.kruijff.ai.nn.functions.loss.MeanSquaredError;
+import org.kruijff.ai.nn.functions.loss.MeanSquaredErrorLossFunction;
 import org.kruijff.ai.nn.neurons.HiddenNeuron;
 import org.kruijff.ai.nn.neurons.InputNeuron;
 import org.kruijff.ai.nn.neurons.OutputNeuron;
@@ -23,7 +23,7 @@ public class NeuralNetwork
     private final Layer<InputNeuron> input;
     private final List<Layer<HiddenNeuron>> hidden;
     private final Layer<OutputNeuron> output;
-    private final LossFunction loss = new MeanSquaredError();
+    private final LossFunction loss = new MeanSquaredErrorLossFunction();
     private final BackpropagationFunction backpropagation = new BackpropagationFunction();
 
     public NeuralNetwork(String id, Layer<InputNeuron> input, List<Layer<HiddenNeuron>> hidden, Layer<OutputNeuron> output) {

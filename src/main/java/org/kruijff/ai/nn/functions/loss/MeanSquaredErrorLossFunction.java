@@ -8,7 +8,7 @@ package org.kruijff.ai.nn.functions.loss;
 import static java.lang.Math.pow;
 import org.kruijff.ai.nn.functions.LossFunction;
 
-public class MeanSquaredError
+public class MeanSquaredErrorLossFunction
         implements LossFunction {
 
     @Override
