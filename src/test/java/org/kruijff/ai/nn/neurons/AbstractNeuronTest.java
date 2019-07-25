@@ -53,8 +53,7 @@ public class AbstractNeuronTest {
     public void addInputConnection2() {
         ActivationFunctionSpy actFunc = new ActivationFunctionSpy();
         Neuron from = new NeuronStub("Test", 16d);
-        Connection in = new Connection(from, n, .5);
-        n.addInputConnection(in);
+        n.addInputConnection(new Connection(from, n, .5));
         n.setActivating(actFunc);
         assertEquals(8d, n.output(), .1);
         assertEquals(1, actFunc.count());
@@ -64,10 +63,13 @@ public class AbstractNeuronTest {
     @Test
     @Ignore
     public void addOutputConnection() {
-        Neuron to = new HiddenNeuron("Test", null);
-        Connection out = new Connection(n, to);
-        n.addOutputConnection(out);
-        fail("Needs an assertion");
+        ActivationFunctionSpy actFunc = new ActivationFunctionSpy();
+        HiddenNeuron to = new HiddenNeuron("Test", null);
+        to.setActivating(actFunc);
+        n.addOutputConnection(new Connection(n, to));
+        for (Connection c : n.outputConnections())
+            c.to().output();
+        assertEquals(1, actFunc.count());
         assertEquals(1, n.outputConnections().size());
     }
 }
