@@ -5,8 +5,6 @@
  */
 package org.kruijff.ai;
 
-import org.kruijff.ai.ga.Population;
-
 public class MainGA {
 
     public static void main(String[] args) {

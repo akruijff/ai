@@ -5,12 +5,11 @@
  */
 package org.kruijff.ai.nn.neurons;
 
-import org.kruijff.ai.nn.neurons.InputNeuron;
-import org.kruijff.ai.nn.neurons.util.NeuronVisitorSpy;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
+import org.kruijff.ai.nn.neurons.util.NeuronVisitorSpy;
 
 /**
  *

@@ -7,7 +7,6 @@ package org.kruijff.ai.nn;
 
 import java.util.List;
 import org.kruijff.ai.nn.functions.ActivationFunction;
-import org.kruijff.ai.nn.functions.LossFunction;
 
 public interface Neuron {
 

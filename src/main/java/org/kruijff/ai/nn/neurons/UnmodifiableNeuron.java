@@ -11,7 +11,6 @@ import org.kruijff.ai.nn.Network;
 import org.kruijff.ai.nn.Neuron;
 import org.kruijff.ai.nn.NeuronVisitor;
 import org.kruijff.ai.nn.functions.ActivationFunction;
-import org.kruijff.ai.nn.functions.LossFunction;
 
 public class UnmodifiableNeuron
         implements Neuron {
