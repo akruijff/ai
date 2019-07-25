@@ -54,7 +54,7 @@ public class SumKoutputs
     @Override
     public void visitOutputNeuron(OutputNeuron n) {
         NeuralNetwork network = (NeuralNetwork) n.network();
-        total = n.loss().derivative(network.getDesiredOutput(n), n.output()); // -(desired - ak)
+        total = network.loss(network.getDesiredOutput(n), n.output()); // -(desired - ak)
     }
 
     public double total() {

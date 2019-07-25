@@ -109,4 +109,13 @@ public class NeuralNetwork
     public double getDesiredOutput(OutputNeuron n) {
         return expectedOutputs.get(n);
     }
+
+    double loss(double desiredOutput, double output) {
+        return loss.derivative(desiredOutput, output);
+    }
+
+    public NeuralNetwork setLoss(LossFunction loss) {
+        this.loss = loss;
+        return this;
+    }
 }

@@ -16,9 +16,7 @@ import org.kruijff.ai.nn.Connection;
 import org.kruijff.ai.nn.Network;
 import org.kruijff.ai.nn.Neuron;
 import org.kruijff.ai.nn.functions.ActivationFunction;
-import org.kruijff.ai.nn.functions.LossFunction;
 import org.kruijff.ai.nn.functions.activating.SigmoidFunction;
-import org.kruijff.ai.nn.functions.loss.MeanSquaredError;
 import org.kruijff.ai.nn.functions.summing.WeightedSumFunction;
 
 public abstract class AbstractNeuron
@@ -33,7 +31,6 @@ public abstract class AbstractNeuron
 
     private Function<List<Connection>, Double> summing = new WeightedSumFunction();
     private ActivationFunction activating = new SigmoidFunction();
-    private LossFunction loss = new MeanSquaredError();
 
     AbstractNeuron(String id, Network network) {
         this.id = ++n;
@@ -93,11 +90,6 @@ public abstract class AbstractNeuron
         return activating;
     }
 
-    @Override
-    public LossFunction loss() {
-        return loss;
-    }
-
     public AbstractNeuron setSumming(Function<List<Connection>, Double> summing) {
         this.summing = summing;
         return this;
@@ -105,11 +97,6 @@ public abstract class AbstractNeuron
 
     public AbstractNeuron setActivating(ActivationFunction activating) {
         this.activating = activating;
-        return this;
-    }
-
-    public AbstractNeuron setLoss(LossFunction loss) {
-        this.loss = loss;
         return this;
     }
 }

@@ -21,8 +21,6 @@ public interface Neuron {
 
     public ActivationFunction activating();
 
-    public LossFunction loss();
-
     public void accept(NeuronVisitor visitor);
 
     public void addOutputConnection(Connection c);

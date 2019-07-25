@@ -53,11 +53,6 @@ public class UnmodifiableNeuron
     }
 
     @Override
-    public LossFunction loss() {
-        return adaptee.loss();
-    }
-
-    @Override
     public void accept(NeuronVisitor visitor) {
         adaptee.accept(visitor);
     }

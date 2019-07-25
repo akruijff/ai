@@ -59,11 +59,6 @@ public class NeuronStub
     }
 
     @Override
-    public LossFunction loss() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public void accept(NeuronVisitor visitor) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
