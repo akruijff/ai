@@ -23,7 +23,7 @@ public class NeuralNetwork
     private final Layer<InputNeuron> input;
     private final List<Layer<HiddenNeuron>> hidden;
     private final Layer<OutputNeuron> output;
-    private final LossFunction loss = new MeanSquaredErrorLossFunction();
+    private LossFunction loss = new MeanSquaredErrorLossFunction();
     private final BackpropagationFunction backpropagation = new BackpropagationFunction();
 
     public NeuralNetwork(String id, Layer<InputNeuron> input, List<Layer<HiddenNeuron>> hidden, Layer<OutputNeuron> output) {
