@@ -5,6 +5,8 @@
  */
 package org.kruijff.ai;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.kruijff.ai.nn.Network;
 import org.kruijff.ai.nn.fc.NeuralNetwork;
 import org.kruijff.ai.nn.fc.NeuralNetworkBuilder;
@@ -17,19 +19,29 @@ public class Main {
 
     public static void main(String[] args) {
         double inputs[][] = {{1, 1}, {1, 0}, {0, 1}, {0, 0}};
-        double expectedOutputs[][] = {{0}, {1}, {1}, {0}};
+        double expected[][] = {{0}, {1}, {1}, {0}};
         NeuralNetwork network = setupNetwork();
 
-        System.out.println("   Before:");
-        showResults(network, inputs);
-
-        network.train(inputs, expectedOutputs, (int runs, double error) -> runs >= 50000 || error < 0.001);
-
-        System.out.println("   After:");
-        showResults(network, inputs);
+        showResults("Before:", network, inputs);
+        network.train(inputs, expected, (int runs, double error) -> runs >= 50000 || error < 0.01);
+        showResults("After:", network, inputs);
     }
 
-    private static void showResults(Network network, double[][] inputs) {
+    @Test
+    public void test() {
+        double inputs[][] = {{1, 1}, {1, 0}, {0, 1}, {0, 0}};
+        double expected[][] = {{0}, {1}, {1}, {0}};
+        NeuralNetwork network = setupNetwork();
+        network.train(inputs, expected, (int runs, double error) -> runs >= 500000 || error < 0.001);
+
+        for (int i = 0; i < inputs.length; ++i) {
+            double[] actual = network.apply(inputs[i]);
+            Assert.assertEquals(expected[i][0], actual[0], .1d);
+        }
+    }
+
+    private static void showResults(String h, Network network, double[][] inputs) {
+        System.out.println("   " + h);
         for (int i = 0; i < inputs.length; ++i) {
             double[] output = network.apply(inputs[i]);
             System.out.println("" + inputs[i][0] + " XOR " + inputs[i][1] + " == " + output[0]);
