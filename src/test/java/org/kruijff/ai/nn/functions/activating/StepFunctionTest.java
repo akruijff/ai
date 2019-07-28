@@ -28,36 +28,51 @@
  */
 package org.kruijff.ai.nn.functions.activating;
 
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import org.kruijff.ai.nn.functions.ActivationFunction;
 
-public class StepFunction
-        implements ActivationFunction {
+public class StepFunctionTest {
 
-    private double threshold;
-    private Double high;
-    private Double low;
-
-    public StepFunction() {
-        this(.5d);
+    @Test
+    public void apply_negative() {
+        ActivationFunction func = new StepFunction();
+        double result = func.apply(-1);
+        assertEquals(0, result, 0.001);
     }
 
-    public StepFunction(double treshold) {
-        this(treshold, 1d, 0d);
+    @Test
+    public void apply_zero() {
+        ActivationFunction func = new StepFunction();
+        double result = func.apply(0);
+        assertEquals(0, result, 0.001);
     }
 
-    public StepFunction(double treshold, double high, double low) {
-        this.threshold = treshold;
-        this.high = high;
-        this.low = low;
+    @Test
+    public void apply_positive() {
+        ActivationFunction func = new StepFunction();
+        double result = func.apply(1);
+        assertEquals(1, result, 0.001);
     }
 
-    @Override
-    public double apply(double t) {
-        return t >= threshold ? high : low;
+    @Test
+    public void derivative_negative() {
+        ActivationFunction func = new StepFunction();
+        double result = func.derivative(-1);
+        assertEquals(0, result, 0.001);
     }
 
-    @Override
-    public double derivative(double t) {
-        return 0d;
+    @Test
+    public void derivative_zero() {
+        ActivationFunction func = new StepFunction();
+        double result = func.derivative(0);
+        assertEquals(0, result, 0.001);
+    }
+
+    @Test
+    public void derivative_positive() {
+        ActivationFunction func = new StepFunction();
+        double result = func.derivative(1);
+        assertEquals(0, result, 0.001);
     }
 }
