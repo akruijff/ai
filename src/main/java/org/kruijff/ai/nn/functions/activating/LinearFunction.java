@@ -12,6 +12,14 @@ public class LinearFunction
 
     private double bias;
 
+    public LinearFunction() {
+        this(0);
+    }
+
+    public LinearFunction(double bias) {
+        this.bias = bias;
+    }
+
     @Override
     public double apply(double t) {
         return t + bias;
