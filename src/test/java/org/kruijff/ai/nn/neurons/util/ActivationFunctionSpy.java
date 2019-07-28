@@ -35,13 +35,18 @@ public class ActivationFunctionSpy
 
     private int count;
 
+    public Object count() {
+        return count;
+    }
+
     @Override
     public double apply(double t) {
         ++count;
         return t;
     }
 
-    public Object count() {
-        return count;
+    @Override
+    public double derivative(double t) {
+        return 0;
     }
 }

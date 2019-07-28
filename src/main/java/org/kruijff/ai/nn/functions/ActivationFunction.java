@@ -32,7 +32,5 @@ public interface ActivationFunction {
 
     public double apply(double t);
 
-    default double derivative(double t) {
-        return 1d;
-    }
+    public double derivative(double t);
 }
