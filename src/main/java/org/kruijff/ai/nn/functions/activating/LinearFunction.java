@@ -13,12 +13,12 @@ public class LinearFunction
     private double bias;
 
     @Override
-    public Double apply(Double t) {
+    public double apply(double t) {
         return t + bias;
     }
 
     @Override
-    public Double derivative(Double t) {
-        return 0d; // @TODO is this correct?
+    public double derivative(double t) {
+        return 0d;
     }
 }

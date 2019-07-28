@@ -12,12 +12,12 @@ public class RectifiedLinearUnitFunction
         implements ActivationFunction {
 
     @Override
-    public Double apply(Double t) {
+    public double apply(double t) {
         return max(0, t);
     }
 
     @Override
-    public Double derivative(Double t) {
+    public double derivative(double t) {
         return t >= 0 ? 1d : 0d;
     }
 }

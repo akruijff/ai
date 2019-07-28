@@ -29,12 +29,12 @@ public class StepFunction
     }
 
     @Override
-    public Double apply(Double t) {
+    public double apply(double t) {
         return t >= threshold ? high : low;
     }
 
     @Override
-    public Double derivative(Double t) {
+    public double derivative(double t) {
         return 1d;
     }
 }

@@ -3,13 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.kruijff.ai.nn.functions;
+package org.kruijff.ai.nn.functions.activating;
 
-public interface ActivationFunction {
+public class LinearFunctionTest {
 
-    public double apply(double t);
-
-    default double derivative(double t) {
-        return 1d;
-    }
 }

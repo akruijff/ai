@@ -13,7 +13,7 @@ public class ActivationFunctionSpy
     private int count;
 
     @Override
-    public Double apply(Double t) {
+    public double apply(double t) {
         ++count;
         return t;
     }

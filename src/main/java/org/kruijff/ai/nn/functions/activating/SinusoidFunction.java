@@ -13,12 +13,12 @@ public class SinusoidFunction
         implements ActivationFunction {
 
     @Override
-    public Double apply(Double t) {
+    public double apply(double t) {
         return sin(t);
     }
 
     @Override
-    public Double derivative(Double t) {
+    public double derivative(double t) {
         return cos(t);
     }
 }

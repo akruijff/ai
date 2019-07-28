@@ -22,12 +22,12 @@ public class SigmoidFunction
     }
 
     @Override
-    public Double derivative(Double x) {
+    public double derivative(double x) {
         return x * (1d - x);
     }
 
     @Override
-    public Double apply(Double x) {
+    public double apply(double x) {
         return 1d / (1 + exp(-slope * x));
     }
 }
