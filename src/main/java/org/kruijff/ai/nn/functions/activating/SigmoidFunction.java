@@ -45,12 +45,12 @@ public class SigmoidFunction
     }
 
     @Override
-    public double derivative(double x) {
-        return x * (1d - x);
+    public double apply(double x) {
+        return 1d / (1 + exp(-slope * x));
     }
 
     @Override
-    public double apply(double x) {
-        return 1d / (1 + exp(-slope * x));
+    public double derivative(double x) {
+        return apply(x) * (1d - apply(x));
     }
 }
