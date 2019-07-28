@@ -26,11 +26,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai;
+package org.kruijff.ai.nn;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kruijff.ai.nn.Network;
 import org.kruijff.ai.nn.mpl.NeuralNetwork;
 import org.kruijff.ai.nn.mpl.NeuralNetworkBuilder;
 
@@ -38,7 +37,7 @@ import org.kruijff.ai.nn.mpl.NeuralNetworkBuilder;
  *
  * @author Alex de Kruijff <alex.de.kruijff@MazarineBlue.org>
  */
-public class Main {
+public class MainNN {
 
     public static void main(String[] args) {
         double inputs[][] = {{1, 1}, {1, 0}, {0, 1}, {0, 0}};
