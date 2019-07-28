@@ -28,51 +28,26 @@
  */
 package org.kruijff.ai.ga;
 
-import static java.lang.Integer.max;
-import static java.lang.Math.floor;
-import static java.lang.Math.random;
-import static java.util.Arrays.copyOf;
+import static java.lang.Math.exp;
+import static java.lang.Math.pow;
+import static java.lang.Math.sin;
 
-public class DNA {
+public class DNA
+        implements Fitness {
 
-    private Gene[] genes;
+    private static final double W = 1;
+    private static final double O = 1;
 
-    public DNA(int n) {
-        genes = new Gene[n];
+    private final Gene x;
+    private final Gene y;
+
+    public DNA(Gene x, Gene y) {
+        this.x = x;
+        this.y = y;
     }
 
-    DNA crossover(DNA other) {
-        int pivot = (int) floor(random() * genes.length);
-        int n = max(genes.length, other.genes.length);
-        DNA child = new DNA(n);
-        for (int i = 0; i < pivot; ++i)
-            child.genes[i] = genes[i];
-        for (int i = pivot; i < child.genes.length; ++i)
-            child.genes[i] = other.genes[i];
-        return child;
-    }
-
-    void mutation(Settings settings) {
-        removeGenesByChance(settings);
-        doGeneMutationsByChance(settings);
-        addGeneByChance(settings);
-    }
-
-    private void removeGenesByChance(Settings settings) {
-        if (settings.isRemoveGene() && genes.length > 0)
-            genes = copyOf(genes, genes.length - 1, Gene[].class);
-    }
-
-    private void doGeneMutationsByChance(Settings settings) {
-        for (int i = 0; i < genes.length; ++i)
-            if (settings.isMutateGene())
-                genes[i] = settings.geneSupplier().get();
-    }
-
-    private void addGeneByChance(Settings settings) {
-        if (settings.isAddGene()) {
-            genes = copyOf(genes, genes.length + 1, Gene[].class);
-            genes[genes.length - 1] = settings.geneSupplier().get();
-        }
+    @Override
+    public double fitness() {
+        return pow(sin(W * x.value), 2) * pow(sin(W * y.value), 2) * exp((x.value + y.value) / O);
     }
 }

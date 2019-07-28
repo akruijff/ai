@@ -29,63 +29,84 @@
 package org.kruijff.ai.ga;
 
 import static java.lang.Math.random;
-import java.util.Arrays;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Population {
+public class Population<T> {
 
-    private final Settings settings;
-    private final DNA[] pool;
+    private final Settings<T> settings;
+    private final List<T> pool;
 
-    public static Population init(Supplier<DNA> supplier, int n) {
-        Population p = new Population(new Settings(n));
-        for (int i = 0; i < n; ++i)
-            p.pool[i] = supplier.get();
-        return p;
-    }
-
-    private Population(Settings settings) {
+    public Population(Settings<T> settings) {
         this.settings = settings;
-        this.pool = new DNA[settings.capacity];
+        pool = new ArrayList<>(settings.poolSize);
     }
 
-    public Population selection() {
-        Arrays.sort(pool, (left, right) -> settings.fitnesse.apply(left) - settings.fitnesse.apply(right));
-        Population p = new Population(settings);
-        p.copy(this, 0, settings.keepCount);
-        p.copyByCrossover(this, settings.keepCount, p.pool.length);
-        p.mutationByChance();
+    public Population<T> evolution(StopCondition<T> stopCondition) {
+        Population<T> current = this;
+        while (true) {
+            Population<T> previous = current;
+            current = previous.evolve();
+            if (stopCondition.apply(previous, current))
+                return current;
+        }
+    }
+
+    private Population<T> evolve() {
+        Population<T> current = selection();
+        current.crossover();
+        current.mutation();
+        return current;
+    }
+
+    private Population<T> selection() {
+        Population<T> p = new Population<>(settings);
+        while (!p.isSelectionTargetMet())
+            p.addDNA(selectDNA());
         return p;
     }
 
-    private void copy(Population other, int offset, int n) {
-        n += offset;
-        for (int i = offset; i < n; ++i)
-            pool[i] = other.pickRandomDNA();
+    private boolean isSelectionTargetMet() {
+        return pool.size() >= settings.selectionSize;
     }
 
-    private void copyByCrossover(Population other, int offset, int n) {
-        n += offset;
-        for (int i = offset; i < n; ++i)
-            pool[i] = other.crossoverDNA();
+    private T selectDNA() {
+        return settings.selectFunc.apply(pool);
     }
 
-    private DNA crossoverDNA() {
-        DNA first = pickRandomDNA();
-        DNA second = pickRandomDNA();
-        return first.crossover(second);
+    private void addDNA(T dna) {
+        if (!pool.contains(dna))
+            pool.add(dna);
     }
 
-    private DNA pickRandomDNA() {
-        int last = pool.length - 1;
-        for (int i = 0; i < last; ++i)
-            if (random() < settings.selectionChange)
-                return pool[i];
-        return pool[last];
+    private void crossover() {
+        Population<T> p = new Population<>(settings);
+        while (!p.isCrossoverTargetMet(this))
+            p.addDNA(createDNA());
+        addAll(p);
     }
 
-    private void mutationByChance() {
-        for (int i = 0; i < pool.length; ++i)
-            pool[i].mutation(settings);
+    private boolean isCrossoverTargetMet(Population<T> p) {
+        return pool.size() + p.pool.size() >= settings.poolSize;
+    }
+
+    private T createDNA() {
+        T first = settings.selectFunc.apply(pool);
+        T second = settings.selectFunc.apply(pool);
+        return settings.crossoverFunc.apply(first, second);
+    }
+
+    private void addAll(Population<T> other) {
+        pool.addAll(other.pool);
+    }
+
+    private void mutation() {
+        for (T dna : pool)
+            if (shouldMutate())
+                settings.mutationFunc.accept(this, dna);
+    }
+
+    private boolean shouldMutate() {
+        return random() < settings.mutationChange;
     }
 }

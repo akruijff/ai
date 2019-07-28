@@ -28,5 +28,7 @@
  */
 package org.kruijff.ai.ga;
 
-public interface Gene {
+public interface Fitness {
+
+    public double fitness();
 }

@@ -29,7 +29,21 @@
 package org.kruijff.ai.ga;
 
 public class MainGA {
-
+    
     public static void main(String[] args) {
+        Settings<DNA> settings = new Settings<>();
+        Population<DNA> initial = new Population<>(settings);
+
+        /*
+         * The algorithm terminates if the population has converged (does not produce offspring which
+         * are significantly different from the previous generation). Then it is said that the genetic
+         * algorithm has provided a set of solutions to our problem.
+         */
+        Population<DNA> last = initial.evolution(new StopCondition<DNA>() {
+            @Override
+            public boolean apply(Population<DNA> previous, Population<DNA> current) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
     }
 }
