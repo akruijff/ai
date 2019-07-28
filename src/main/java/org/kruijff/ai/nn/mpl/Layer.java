@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.kruijff.ai.nn.fc;
+package org.kruijff.ai.nn.mpl;
 
 import static java.lang.String.format;
 import java.util.ArrayList;

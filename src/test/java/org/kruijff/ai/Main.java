@@ -8,8 +8,8 @@ package org.kruijff.ai;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kruijff.ai.nn.Network;
-import org.kruijff.ai.nn.fc.NeuralNetwork;
-import org.kruijff.ai.nn.fc.NeuralNetworkBuilder;
+import org.kruijff.ai.nn.mpl.NeuralNetwork;
+import org.kruijff.ai.nn.mpl.NeuralNetworkBuilder;
 
 /**
  *

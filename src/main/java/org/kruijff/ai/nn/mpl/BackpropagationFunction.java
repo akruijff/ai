@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.kruijff.ai.nn.fc;
+package org.kruijff.ai.nn.mpl;
 
 import java.util.HashMap;
 import java.util.Map;
