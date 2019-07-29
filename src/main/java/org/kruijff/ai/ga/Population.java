@@ -31,6 +31,7 @@ package org.kruijff.ai.ga;
 import static java.lang.Math.random;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Population<T> {
 
@@ -40,6 +41,30 @@ public class Population<T> {
     public Population(Settings<T> settings) {
         this.settings = settings;
         pool = new ArrayList<>(settings.poolSize);
+    }
+
+    @Override
+    public String toString() {
+        return "size = " + pool.size();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.pool);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj || obj != null && getClass() == obj.getClass()
+                && Objects.equals(this.pool, ((Population<?>) obj).pool);
+    }
+
+    public Population<T> init() {
+        while (pool.size() < settings.poolSize)
+            pool.add(settings.initFunc.get());
+        return this;
     }
 
     public Population<T> evolution(StopCondition<T> stopCondition) {
@@ -108,5 +133,13 @@ public class Population<T> {
 
     private boolean shouldMutate() {
         return random() < settings.mutationChange;
+    }
+
+    public int size() {
+        return pool.size();
+    }
+
+    public boolean contains(T t) {
+        return pool.contains(t);
     }
 }

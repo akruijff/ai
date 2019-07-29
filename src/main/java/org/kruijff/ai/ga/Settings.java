@@ -32,12 +32,14 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Settings<T> {
 
     int poolSize = 128;
     int selectionSize = 64;
     double mutationChange = 0.01;
+    Supplier<T> initFunc;
     Function<List<T>, T> selectFunc;
     BiFunction<T, T, T> crossoverFunc;
     BiConsumer<Population<T>, T> mutationFunc;
