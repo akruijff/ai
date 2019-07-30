@@ -87,7 +87,7 @@ public class Population<T> {
     private Population<T> selection() {
         Population<T> p = new Population<>(settings);
         while (!p.isSelectionTargetMet())
-            p.addDNA(selectDNA());
+            p.addElement(selectElement());
         return p;
     }
 
@@ -95,19 +95,19 @@ public class Population<T> {
         return pool.size() >= settings.selectionSize;
     }
 
-    private T selectDNA() {
+    private T selectElement() {
         return settings.selectFunc.apply(pool);
     }
 
-    private void addDNA(T dna) {
-        if (!pool.contains(dna))
-            pool.add(dna);
+    private void addElement(T e) {
+        if (!pool.contains(e))
+            pool.add(e);
     }
 
     private void crossover() {
         Population<T> p = new Population<>(settings);
         while (!p.isCrossoverTargetMet(this))
-            p.addDNA(createDNA());
+            p.addElement(createElement());
         addAll(p);
     }
 
@@ -115,7 +115,7 @@ public class Population<T> {
         return pool.size() + p.pool.size() >= settings.poolSize;
     }
 
-    private T createDNA() {
+    private T createElement() {
         T first = settings.selectFunc.apply(pool);
         T second = settings.selectFunc.apply(pool);
         return settings.crossoverFunc.apply(first, second);
@@ -126,9 +126,9 @@ public class Population<T> {
     }
 
     private void mutation() {
-        for (T dna : pool)
+        for (T e : pool)
             if (shouldMutate())
-                settings.mutationFunc.accept(this, dna);
+                settings.mutationFunc.accept(this, e);
     }
 
     private boolean shouldMutate() {
