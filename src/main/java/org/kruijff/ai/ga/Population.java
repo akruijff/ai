@@ -30,8 +30,10 @@ package org.kruijff.ai.ga;
 
 import static java.lang.Math.random;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class Population<T> {
 
@@ -101,18 +103,14 @@ public class Population<T> {
     }
 
     private void addElement(T e) {
-        if (!pool.contains(e))
-            pool.add(e);
-        else if (++preventLoop >= settings.preventLoop)
-            pool.add(settings.initFunc.get());
+        addElement(e, Collections.EMPTY_LIST);
     }
 
     private void crossover() {
         Population<T> p = new Population<>(settings);
         while (!p.isCrossoverTargetMet(this)) {
             T e = createElement();
-//            if (!pool.contains(e))
-                p.addElement(e);
+            p.addElement(e, pool);
         }
         addAll(p);
     }
@@ -125,6 +123,13 @@ public class Population<T> {
         T first = settings.selectFunc.apply(pool);
         T second = settings.selectFunc.apply(pool);
         return settings.crossoverFunc.apply(first, second);
+    }
+
+    private void addElement(T e, List<T> other) {
+        if (!pool.contains(e) && !other.contains(e))
+            pool.add(e);
+        else if (++preventLoop >= settings.preventLoop)
+            pool.add(settings.initFunc.get());
     }
 
     private void addAll(Population<T> other) {

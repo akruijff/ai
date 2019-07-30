@@ -44,7 +44,8 @@ public class PopulationTest {
     public void setup() {
         ID.reset();
         settings = new Settings<>();
-        settings.setPoolSize(4);
+        settings.setPoolSize(8);
+        settings.setSelectionSize(8);
         settings.initFunc = ID::new;
     }
 
@@ -61,8 +62,8 @@ public class PopulationTest {
     public void init() {
         Population<ID> p = new Population<>(settings).init();
         assertEquals(settings.poolSize, p.size());
-        for (int i = 1; i <= settings.poolSize; ++i)
-            assertPopulationContains(p, new ID(i));
+        for (int i = 0; i < settings.poolSize; ++i)
+            assertPopulationContains(p, new ID(i + 1));
     }
 
     @Test
@@ -75,13 +76,13 @@ public class PopulationTest {
         assertEquals(settings.poolSize, p1.size());
         assertEquals(settings.poolSize, p2.size());
         assertPopulationContains(p2, new ID(1));
-        for (int i = 1 + settings.selectionSize; i < settings.selectionSize + settings.poolSize; ++i)
-            assertPopulationContains(p2, new ID(i));
+        for (int i = 1; i < settings.poolSize; ++i)
+            assertPopulationContains(p2, new ID(i + settings.poolSize));
     }
 
     @Test
     public void crossover_loop() {
-        settings.setSelectionSize(2);
+        settings.setSelectionSize(3);
         settings.setMutationChance(0);
         settings.selectFunc = new SelectNthElementFunction();
         settings.crossoverFunc = (left, rigth) -> left;
@@ -89,15 +90,15 @@ public class PopulationTest {
         Population<ID> p2 = p1.evolution((previous, current) -> true);
         assertEquals(settings.poolSize, p1.size());
         assertEquals(settings.poolSize, p2.size());
-        for (int i = 1; i < settings.selectionSize; ++i)
-            assertPopulationContains(p2, new ID(i));
-        for (int i = settings.poolSize; i < settings.selectionSize;)
-            assertPopulationContains(p2, new ID(++i));
+        for (int i = 0; i < settings.selectionSize; ++i)
+            assertPopulationContains(p2, new ID(i + 1));
+        for (int i = settings.selectionSize; i < settings.poolSize; ++i)
+            assertPopulationContains(p2, new ID(i + 1 + settings.poolSize - settings.selectionSize));
     }
 
     @Test
     public void crossover() {
-        settings.setSelectionSize(2);
+        settings.setSelectionSize(3);
         settings.setMutationChance(0);
         settings.selectFunc = new SelectNthElementFunction();
         settings.crossoverFunc = (left, rigth) -> new ID();
@@ -106,9 +107,9 @@ public class PopulationTest {
         assertEquals(settings.poolSize, p1.size());
         assertEquals(settings.poolSize, p2.size());
         for (int i = 1; i < settings.selectionSize; ++i)
-            assertPopulationContains(p2, new ID(i));
-        for (int i = 1 + settings.poolSize; i < settings.selectionSize; ++i)
-            assertPopulationContains(p2, new ID(i));
+            assertPopulationContains(p2, new ID(i + 1));
+        for (int i = settings.selectionSize; i < settings.selectionSize; ++i)
+            assertPopulationContains(p2, new ID(i + 1));
     }
 
     @Test
@@ -120,8 +121,8 @@ public class PopulationTest {
         Population<ID> p2 = p1.evolution((previous, current) -> true);
         assertEquals(settings.poolSize, p1.size());
         assertEquals(settings.poolSize, p2.size());
-        for (int i = 1; i < settings.selectionSize; ++i)
-            assertPopulationContains(p2, new ID(i + settings.poolSize));
+        for (int i = 0; i < settings.poolSize; ++i)
+            assertPopulationContains(p2, new ID(i + 1 + settings.poolSize));
     }
 
     /**
