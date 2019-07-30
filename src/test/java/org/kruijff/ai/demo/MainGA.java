@@ -48,25 +48,7 @@ public class MainGA {
         settings.setSelectFunction(new SimpleFitnessFunction());
         settings.setCrossoverFunction((left, rigth) -> new Chromosome(left.x, rigth.y));
         settings.setMutationFunction((p, c) -> c.mutate(STEP_SIZE));
-        settings.setBestPopulationFunc(new BiFunction<Population<Chromosome>, Population<Chromosome>, Population<Chromosome>>() {
-            @Override
-            public Population<Chromosome> apply(Population<Chromosome> previous, Population<Chromosome> current) {
-                if (previous == null)
-                    return current;
-                else if (getBest(previous.getElements()).fitness() > getBest(current.getElements()).fitness())
-                    return previous;
-                else
-                    return current;
-            }
-
-            private Chromosome getBest(List<Chromosome> list) {
-                Chromosome best = null;
-                for (Chromosome c : list)
-                    if (best == null || best.fitness() < c.fitness())
-                        best = c;
-                return best;
-            }
-        });
+        settings.setBestPopulationFunc(new BestPopulationSelectionFunction());
 
         Population<Chromosome> initial = new Population<>(settings);
 
@@ -110,6 +92,20 @@ public class MainGA {
         private boolean isChromosomeSelected(Chromosome c, double sum) {
             double chance = c.fitness() / sum;
             return chance < random();
+        }
+    }
+
+    private static class BestPopulationSelectionFunction
+            implements BiFunction<Population<Chromosome>, Population<Chromosome>, Population<Chromosome>> {
+
+        @Override
+        public Population<Chromosome> apply(Population<Chromosome> previous, Population<Chromosome> current) {
+            if (previous == null)
+                return current;
+            else if (previous.getBest().fitness() >= current.getBest().fitness())
+                return previous;
+            else
+                return current;
         }
     }
 }
