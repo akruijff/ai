@@ -26,10 +26,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai.nn;
+package org.kruijff.ai.demo;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kruijff.ai.nn.Network;
 import org.kruijff.ai.nn.mpl.NeuralNetwork;
 import org.kruijff.ai.nn.mpl.NeuralNetworkBuilder;
 

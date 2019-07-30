@@ -26,24 +26,29 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai.ga;
+package org.kruijff.ai.demo;
 
-public class MainGA {
-    
-    public static void main(String[] args) {
-        Settings<DNA> settings = new Settings<>();
-        Population<DNA> initial = new Population<>(settings);
+import org.kruijff.ai.ga.Fitness;
+import static java.lang.Math.exp;
+import static java.lang.Math.pow;
+import static java.lang.Math.sin;
 
-        /*
-         * The algorithm terminates if the population has converged (does not produce offspring which
-         * are significantly different from the previous generation). Then it is said that the genetic
-         * algorithm has provided a set of solutions to our problem.
-         */
-        Population<DNA> last = initial.evolution(new StopCondition<DNA>() {
-            @Override
-            public boolean apply(Population<DNA> previous, Population<DNA> current) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        });
+public class DNA
+        implements Fitness {
+
+    private static final double W = 1;
+    private static final double O = 1;
+
+    private final Gene x;
+    private final Gene y;
+
+    public DNA(Gene x, Gene y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public double fitness() {
+        return pow(sin(W * x.value), 2) * pow(sin(W * y.value), 2) * exp((x.value + y.value) / O);
     }
 }

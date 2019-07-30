@@ -26,28 +26,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai.ga;
+package org.kruijff.ai.demo;
 
-import static java.lang.Math.exp;
-import static java.lang.Math.pow;
-import static java.lang.Math.sin;
+public class Gene {
 
-public class DNA
-        implements Fitness {
+    double value;
 
-    private static final double W = 1;
-    private static final double O = 1;
-
-    private final Gene x;
-    private final Gene y;
-
-    public DNA(Gene x, Gene y) {
-        this.x = x;
-        this.y = y;
+    public Gene(double value) {
+        this.value = value;
     }
 
-    @Override
-    public double fitness() {
-        return pow(sin(W * x.value), 2) * pow(sin(W * y.value), 2) * exp((x.value + y.value) / O);
+    public Gene(Gene other) {
+        value = other.value;
     }
 }
