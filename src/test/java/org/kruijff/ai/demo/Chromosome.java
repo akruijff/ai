@@ -28,12 +28,12 @@
  */
 package org.kruijff.ai.demo;
 
-import org.kruijff.ai.ga.Fitness;
 import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
+import org.kruijff.ai.ga.Fitness;
 
-public class DNA
+public class Chromosome
         implements Fitness {
 
     private static final double W = 1;
@@ -42,7 +42,7 @@ public class DNA
     private final Gene x;
     private final Gene y;
 
-    public DNA(Gene x, Gene y) {
+    public Chromosome(Gene x, Gene y) {
         this.x = x;
         this.y = y;
     }
