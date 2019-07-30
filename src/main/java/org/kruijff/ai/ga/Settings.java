@@ -66,15 +66,15 @@ public class Settings<T> {
         this.initFunc = f;
     }
 
-    public void setInitFunction(Function<List<T>, T> f) {
+    public void setSelectFunction(Function<List<T>, T> f) {
         this.selectFunc = f;
     }
 
-    public void setInitFunction(BiFunction<T, T, T> f) {
+    public void setCrossoverFunction(BiFunction<T, T, T> f) {
         this.crossoverFunc = f;
     }
 
-    public void setInitFunction(BiConsumer<Population<T>, T> f) {
+    public void setMutationFunction(BiConsumer<Population<T>, T> f) {
         this.mutationFunc = f;
     }
 }
