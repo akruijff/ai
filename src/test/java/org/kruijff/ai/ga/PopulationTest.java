@@ -29,7 +29,6 @@
 package org.kruijff.ai.ga;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
@@ -45,7 +44,7 @@ public class PopulationTest {
     public void setup() {
         ID.reset();
         settings = new Settings<>();
-        settings.poolSize = 4;
+        settings.setPoolSize(4);
         settings.initFunc = ID::new;
     }
 
@@ -54,41 +53,81 @@ public class PopulationTest {
         settings = null;
     }
 
+    private static void assertPopulationContains(Population<ID> p, ID id) {
+        assertTrue("Population does not contain ID: " + id, p.contains(id));
+    }
+
     @Test
     public void init() {
         Population<ID> p = new Population<>(settings).init();
         assertEquals(settings.poolSize, p.size());
         for (int i = 1; i <= settings.poolSize; ++i)
-            assertTrue("Population does not contain ID: " + i, p.contains(new ID(i)));
+            assertPopulationContains(p, new ID(i));
+    }
+
+    @Test
+    public void selection_loop() {
+        settings.setMutationChance(0);
+        settings.selectFunc = list -> list.get(0);
+        settings.crossoverFunc = (left, rigth) -> left;
+        Population<ID> p1 = new Population<>(settings).init();
+        Population<ID> p2 = p1.evolution((previous, current) -> true);
+        assertEquals(settings.poolSize, p1.size());
+        assertEquals(settings.poolSize, p2.size());
+        assertPopulationContains(p2, new ID(1));
+        for (int i = 1 + settings.selectionSize; i < settings.selectionSize + settings.poolSize; ++i)
+            assertPopulationContains(p2, new ID(i));
+    }
+
+    @Test
+    public void crossover_loop() {
+        settings.setSelectionSize(2);
+        settings.setMutationChance(0);
+        settings.selectFunc = new SelectNthElementFunction();
+        settings.crossoverFunc = (left, rigth) -> left;
+        Population<ID> p1 = new Population<>(settings).init();
+        Population<ID> p2 = p1.evolution((previous, current) -> true);
+        assertEquals(settings.poolSize, p1.size());
+        assertEquals(settings.poolSize, p2.size());
+        for (int i = 1; i < settings.selectionSize; ++i)
+            assertPopulationContains(p2, new ID(i));
+        for (int i = settings.poolSize; i < settings.selectionSize;)
+            assertPopulationContains(p2, new ID(++i));
     }
 
     @Test
     public void crossover() {
-        settings.selectionSize = 2;
-        settings.mutationChange = 0;
-        settings.selectFunc = new SelectFunctionFake();
+        settings.setSelectionSize(2);
+        settings.setMutationChance(0);
+        settings.selectFunc = new SelectNthElementFunction();
         settings.crossoverFunc = (left, rigth) -> new ID();
         Population<ID> p1 = new Population<>(settings).init();
         Population<ID> p2 = p1.evolution((previous, current) -> true);
+        assertEquals(settings.poolSize, p1.size());
+        assertEquals(settings.poolSize, p2.size());
         for (int i = 1; i < settings.selectionSize; ++i)
-            assertTrue(p2.contains(new ID(i)));
-        for (int i = settings.poolSize; i < settings.selectionSize;)
-            assertTrue(p2.contains(new ID(++i)));
+            assertPopulationContains(p2, new ID(i));
+        for (int i = 1 + settings.poolSize; i < settings.selectionSize; ++i)
+            assertPopulationContains(p2, new ID(i));
     }
 
     @Test
     public void mutate() {
-        settings.selectionSize = settings.poolSize;
-        settings.mutationChange = 1;
-        settings.selectFunc = new SelectFunctionFake();
+        settings.setMutationChance(1);
+        settings.selectFunc = new SelectNthElementFunction();
         settings.mutationFunc = (p, id) -> id.setValue(id.getValue() + settings.poolSize);
         Population<ID> p1 = new Population<>(settings).init();
         Population<ID> p2 = p1.evolution((previous, current) -> true);
+        assertEquals(settings.poolSize, p1.size());
+        assertEquals(settings.poolSize, p2.size());
         for (int i = 1; i < settings.selectionSize; ++i)
-            assertTrue(p2.contains(new ID(i + settings.poolSize)));
+            assertPopulationContains(p2, new ID(i + settings.poolSize));
     }
 
-    private static class SelectFunctionFake
+    /**
+     * This function returns the nth element when it is called the nth time.
+     */
+    public static class SelectNthElementFunction
             implements Function<List<ID>, ID> {
 
         private int index = -1;

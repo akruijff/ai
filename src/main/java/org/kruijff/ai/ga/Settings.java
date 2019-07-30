@@ -36,11 +36,45 @@ import java.util.function.Supplier;
 
 public class Settings<T> {
 
+    int preventLoop = 128;
     int poolSize = 128;
     int selectionSize = 64;
-    double mutationChange = 0.01;
+    double mutationChance = 0.01;
     Supplier<T> initFunc;
     Function<List<T>, T> selectFunc;
     BiFunction<T, T, T> crossoverFunc;
     BiConsumer<Population<T>, T> mutationFunc;
+
+    public void setPoolSize(int size) {
+        preventLoop = size;
+        poolSize = size;
+        if (selectionSize > size)
+            selectionSize = size;
+    }
+
+    public void setSelectionSize(int size) {
+        if (poolSize < size)
+            poolSize = size;
+        selectionSize = size;
+    }
+
+    public void setMutationChance(double chance) {
+        mutationChance = chance;
+    }
+
+    public void setInitFunction(Supplier<T> f) {
+        this.initFunc = f;
+    }
+
+    public void setInitFunction(Function<List<T>, T> f) {
+        this.selectFunc = f;
+    }
+
+    public void setInitFunction(BiFunction<T, T, T> f) {
+        this.crossoverFunc = f;
+    }
+
+    public void setInitFunction(BiConsumer<Population<T>, T> f) {
+        this.mutationFunc = f;
+    }
 }

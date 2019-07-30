@@ -37,6 +37,7 @@ public class Population<T> {
 
     private final Settings<T> settings;
     private final List<T> pool;
+    private int preventLoop;
 
     public Population(Settings<T> settings) {
         this.settings = settings;
@@ -102,12 +103,17 @@ public class Population<T> {
     private void addElement(T e) {
         if (!pool.contains(e))
             pool.add(e);
+        else if (++preventLoop >= settings.preventLoop)
+            pool.add(settings.initFunc.get());
     }
 
     private void crossover() {
         Population<T> p = new Population<>(settings);
-        while (!p.isCrossoverTargetMet(this))
-            p.addElement(createElement());
+        while (!p.isCrossoverTargetMet(this)) {
+            T e = createElement();
+//            if (!pool.contains(e))
+                p.addElement(e);
+        }
         addAll(p);
     }
 
@@ -132,7 +138,7 @@ public class Population<T> {
     }
 
     private boolean shouldMutate() {
-        return random() < settings.mutationChange;
+        return random() < settings.mutationChance;
     }
 
     public int size() {
