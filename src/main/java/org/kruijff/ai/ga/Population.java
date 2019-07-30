@@ -31,11 +31,11 @@ package org.kruijff.ai.ga;
 import static java.lang.Math.random;
 import java.util.ArrayList;
 import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
-public class Population<T> {
+public class Population<T extends Fitness> {
 
     private final Settings<T> settings;
     private final List<T> pool;
@@ -76,7 +76,7 @@ public class Population<T> {
             Population<T> previous = current;
             current = previous.evolve();
             if (stopCondition.apply(previous, current))
-                return current;
+                return settings.bestPopulationFunc.apply(previous, current);
         }
     }
 
@@ -84,6 +84,7 @@ public class Population<T> {
         Population<T> current = selection();
         current.crossover();
         current.mutation();
+        ++settings.evolutionCount;
         return current;
     }
 
@@ -126,7 +127,7 @@ public class Population<T> {
     }
 
     private void addElement(T e, List<T> other) {
-        if (!pool.contains(e) && !other.contains(e))
+        if (e != null && !pool.contains(e) && !other.contains(e))
             pool.add(e);
         else if (++preventLoop >= settings.preventLoop)
             pool.add(settings.initFunc.get());
@@ -152,5 +153,17 @@ public class Population<T> {
 
     public boolean contains(T t) {
         return pool.contains(t);
+    }
+
+    public List<T> getElements() {
+        return unmodifiableList(pool);
+    }
+
+    public T getBest() {
+        T best = null;
+        for (T t : pool)
+            if (best == null || best.fitness() < t.fitness())
+                best = t;
+        return best;
     }
 }

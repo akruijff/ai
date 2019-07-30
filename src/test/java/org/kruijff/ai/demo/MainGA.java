@@ -28,14 +28,46 @@
  */
 package org.kruijff.ai.demo;
 
+import static java.lang.Math.random;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.kruijff.ai.ga.Population;
 import org.kruijff.ai.ga.Settings;
 import org.kruijff.ai.ga.StopCondition;
 
 public class MainGA {
-    
+
+    private static final double STEP_SIZE = 0.1;
+
     public static void main(String[] args) {
         Settings<Chromosome> settings = new Settings<>();
+        // @TODO Test for functions set
+        // @TODO Test for functions returns null
+        settings.setInitFunction(() -> new Chromosome(random(), random()));
+        settings.setSelectFunction(new SimpleFitnessFunction());
+        settings.setCrossoverFunction((left, rigth) -> new Chromosome(left.x, rigth.y));
+        settings.setMutationFunction((p, c) -> c.mutate(STEP_SIZE));
+        settings.setBestPopulationFunc(new BiFunction<Population<Chromosome>, Population<Chromosome>, Population<Chromosome>>() {
+            @Override
+            public Population<Chromosome> apply(Population<Chromosome> previous, Population<Chromosome> current) {
+                if (previous == null)
+                    return current;
+                else if (getBest(previous.getElements()).fitness() > getBest(current.getElements()).fitness())
+                    return previous;
+                else
+                    return current;
+            }
+
+            private Chromosome getBest(List<Chromosome> list) {
+                Chromosome best = null;
+                for (Chromosome c : list)
+                    if (best == null || best.fitness() < c.fitness())
+                        best = c;
+                return best;
+            }
+        });
+
         Population<Chromosome> initial = new Population<>(settings);
 
         /*
@@ -43,11 +75,41 @@ public class MainGA {
          * are significantly different from the previous generation). Then it is said that the genetic
          * algorithm has provided a set of solutions to our problem.
          */
-        Population<Chromosome> last = initial.evolution(new StopCondition<Chromosome>() {
+        Population<Chromosome> best = initial.evolution(new StopCondition<Chromosome>() {
             @Override
             public boolean apply(Population<Chromosome> previous, Population<Chromosome> current) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                Chromosome p = previous.getBest();
+                Chromosome c = current.getBest();
+                return p != null && c.fitness() < p.fitness();
             }
         });
+        System.out.println("Evolution count: " + settings.getEvolutionCount());
+        System.out.println("Best chromosone: " + best.getBest());
+    }
+
+    public static class SimpleFitnessFunction
+            implements Function<List<Chromosome>, Chromosome> {
+
+        @Override
+        public Chromosome apply(List<Chromosome> list) {
+            return selectChromosomeOrNull(list);
+        }
+
+        private Chromosome selectChromosomeOrNull(List<Chromosome> list) {
+            double sum = getSumOfPostiveFitnessValues(list);
+            return list.stream().filter(c -> isChromosomeSelected(c, sum)).findFirst().orElse(null);
+        }
+
+        private Double getSumOfPostiveFitnessValues(List<Chromosome> list) {
+            return list.stream()
+                    .map(c -> c.fitness())
+                    .map(f -> f != null && f > 0 ? f : 0)
+                    .reduce(0d, (a, b) -> a + b);
+        }
+
+        private boolean isChromosomeSelected(Chromosome c, double sum) {
+            double chance = c.fitness() / sum;
+            return chance < random();
+        }
     }
 }

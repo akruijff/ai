@@ -28,7 +28,7 @@
  */
 package org.kruijff.ai.ga;
 
-public interface StopCondition<T> {
+public interface StopCondition<T extends Fitness> {
 
     public boolean apply(Population<T> previous, Population<T> current);
 }

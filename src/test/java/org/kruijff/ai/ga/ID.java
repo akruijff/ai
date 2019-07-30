@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @author Alex de Kruijff <alex.de.kruijff@MazarineBlue.org>
  */
 public class ID
-        implements Serializable {
+        implements Fitness, Serializable {
 
     private static final long serialVersionUID = 1L;
     private static int count = 0;
@@ -79,5 +79,10 @@ public class ID
     
     public void setValue(int value) {
         this.value = value;
+    }
+
+    @Override
+    public double fitness() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

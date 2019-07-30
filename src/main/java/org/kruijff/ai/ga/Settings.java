@@ -34,16 +34,22 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class Settings<T> {
+public class Settings<T extends Fitness> {
 
-    int preventLoop = 128;
-    int poolSize = 128;
-    int selectionSize = 64;
+    int poolSize = 1024;
+    int preventLoop = poolSize;
+    int selectionSize = poolSize / 2;
     double mutationChance = 0.01;
+    int evolutionCount = 0;
     Supplier<T> initFunc;
     Function<List<T>, T> selectFunc;
     BiFunction<T, T, T> crossoverFunc;
     BiConsumer<Population<T>, T> mutationFunc;
+    BiFunction<Population<T>, Population<T>, Population<T>> bestPopulationFunc = (previous, current) -> current;
+
+    public int getEvolutionCount() {
+        return evolutionCount;
+    }
 
     public void setPoolSize(int size) {
         preventLoop = size;
@@ -76,5 +82,9 @@ public class Settings<T> {
 
     public void setMutationFunction(BiConsumer<Population<T>, T> f) {
         this.mutationFunc = f;
+    }
+
+    public void setBestPopulationFunc(BiFunction<Population<T>, Population<T>, Population<T>> f) {
+        this.bestPopulationFunc = f;
     }
 }

@@ -28,27 +28,63 @@
  */
 package org.kruijff.ai.demo;
 
+import static java.lang.Double.doubleToLongBits;
 import static java.lang.Math.exp;
 import static java.lang.Math.pow;
+import static java.lang.Math.random;
 import static java.lang.Math.sin;
+import static java.lang.String.format;
 import org.kruijff.ai.ga.Fitness;
 
 public class Chromosome
         implements Fitness {
 
-    private static final double W = 1;
+    private static final double W = Math.PI;
     private static final double O = 1;
 
-    private final Gene x;
-    private final Gene y;
+    double x;
+    double y;
 
-    public Chromosome(Gene x, Gene y) {
+    public Chromosome(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
     @Override
+    public String toString() {
+        return format("Chromosome{x=%.2f, y=%.2f, fitness=%f}", x, y, fitness());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + (int) (doubleToLongBits(this.x) ^ (doubleToLongBits(this.x) >>> 32));
+        hash = 73 * hash + (int) (doubleToLongBits(this.y) ^ (doubleToLongBits(this.y) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj || obj != null && getClass() == obj.getClass()
+                && doubleToLongBits(this.x) == doubleToLongBits(((Chromosome) obj).x)
+                && doubleToLongBits(this.y) == doubleToLongBits(((Chromosome) obj).y);
+    }
+
+    @Override
     public double fitness() {
-        return pow(sin(W * x.value), 2) * pow(sin(W * y.value), 2) * exp((x.value + y.value) / O);
+        return pow(sin(W * x), 2) * pow(sin(W * y), 2) * exp((x + y) / O);
+    }
+
+    void mutate(double stepSize) {
+        double r = Math.random() - .5;
+        double step = 2 * stepSize * r;
+        step(step);
+    }
+
+    private void step(double step) {
+        if (random() < .5)
+            this.x += step;
+        else
+            this.y += step;
     }
 }
