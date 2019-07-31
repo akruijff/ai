@@ -29,6 +29,7 @@
 package org.kruijff.ai.ga;
 
 import static java.lang.Math.random;
+import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.Collections;
 import static java.util.Collections.unmodifiableList;
@@ -48,7 +49,7 @@ public class Population<T extends Fitness> {
 
     @Override
     public String toString() {
-        return "size = " + pool.size();
+        return format("size=%d, fitness=(%f, %f, %f)", pool.size(), getMinFitness(), getAvgFitness(), getMaxFitness());
     }
 
     @Override
