@@ -28,6 +28,8 @@
  */
 package org.kruijff.ai.demo;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import static java.lang.Math.random;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -35,12 +37,16 @@ import java.util.function.Function;
 import org.kruijff.ai.ga.Population;
 import org.kruijff.ai.ga.Settings;
 import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
+import org.kruijff.canvas.Canvas;
 
 public class MainGA {
 
     private static final double STEP_SIZE = 0.1;
 
     public static void main(String[] args) {
+        Canvas canvas = new Canvas(640, 480);
+        drawBackground(canvas);
+
         Settings<Chromosome> settings = new Settings<>();
         // @TODO Test for functions set
         // @TODO Test for functions returns null
@@ -60,6 +66,20 @@ public class MainGA {
         Population<Chromosome> best = initial.evolution(new MaxEvolutionStopCondition<>(10));
         System.out.println("Evolution count: " + settings.getEvolutionCount());
         System.out.println("Best chromosone: " + best.getBest());
+        canvas.close();
+    }
+
+    private static void drawBackground(Canvas canvas) {
+        int pixels[] = canvas.loadPixels();
+        for (int x = 0; x < canvas.width(); ++x)
+            for (int y = 0; y < canvas.height(); ++y) {
+                double xx = 4d * x / canvas.width();
+                double yy = 4d * (canvas.height() - y) / canvas.height();
+                int f = (int) Chromosome.fitness(xx, yy);
+                int c = Canvas.color(f % 256);
+                pixels[x + canvas.width() * y] = c;
+            }
+        canvas.updatePixels(pixels);
     }
 
     public static class SimpleFitnessFunction

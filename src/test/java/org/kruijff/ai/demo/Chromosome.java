@@ -40,10 +40,15 @@ public class Chromosome
         implements Fitness {
 
     private static final double W = Math.PI;
-    private static final double O = 1;
+    private static final double O = 7;
+    private static final double C = 767;
 
     double x;
     double y;
+
+    public static double fitness(double x, double y) {
+        return C * pow(sin(W * x), 2) * pow(sin(W * y), 2) * exp((x + y) / O);
+    }
 
     public Chromosome(double x, double y) {
         this.x = x;
@@ -72,7 +77,7 @@ public class Chromosome
 
     @Override
     public double fitness() {
-        return pow(sin(W * x), 2) * pow(sin(W * y), 2) * exp((x + y) / O);
+        return fitness(x, y);
     }
 
     void mutate(double stepSize) {

@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.kruijff.ai.nn.Network;
 import org.kruijff.ai.nn.mpl.NeuralNetwork;
 import org.kruijff.ai.nn.mpl.NeuralNetworkBuilder;
+import org.kruijff.canvas.Canvas;
 
 /**
  *
@@ -48,6 +49,18 @@ public class MainNN {
         showResults("Before:", network, inputs);
         network.train(inputs, expected, (int runs, double error) -> runs >= 50000 || error < 0.01);
         showResults("After:", network, inputs);
+
+        Canvas canvas = new Canvas(640, 480);
+        int pixels[] = canvas.loadPixels();
+        for (int x = 0; x < canvas.width(); ++x)
+            for (int y = 0; y < canvas.height(); ++y) {
+                double[] input = {x / canvas.width(), y / canvas.height()};
+                double[] output = network.apply(input);
+                int c = Canvas.color((int) (255 * output[0]));
+                pixels[x + canvas.width() * y] = c;
+            }
+        canvas.updatePixels(pixels);
+        canvas.close();
     }
 
     @Test
