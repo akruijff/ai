@@ -73,6 +73,7 @@ public class Population<T extends Fitness> {
     public Population<T> init() {
         while (pool.size() < settings.poolSize)
             pool.add(settings.initFunc.get());
+        Collections.sort(pool);
         listeners.initialPopulation(this);
         return this;
     }
@@ -93,6 +94,7 @@ public class Population<T extends Fitness> {
         Population<T> current = selection();
         current.crossover();
         current.mutation();
+        Collections.sort(pool);
         ++settings.evolutionCount;
         listeners.endEvolvingPopulation(this);
         return current;

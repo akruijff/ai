@@ -28,7 +28,19 @@
  */
 package org.kruijff.ai.ga;
 
-public interface Fitness {
+public interface Fitness
+        extends Comparable<Fitness> {
 
     public double fitness();
+
+    @Override
+    public default int compareTo(Fitness other) {
+        double a = fitness();
+        double b = other.fitness();
+        if (a > b)
+            return -1;
+        if (a < b)
+            return 1;
+        return 0;
+    }
 }
