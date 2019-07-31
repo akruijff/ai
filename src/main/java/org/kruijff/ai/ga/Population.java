@@ -41,7 +41,7 @@ public class Population<T extends Fitness> {
     private final Settings<T> settings;
     private final List<T> pool;
     private int preventLoop;
-    private final PopulationListenerCollection<T> listeners = new PopulationListenerCollection<>();
+    private PopulationListenerCollection<T> listeners = new PopulationListenerCollection<>();
 
     public Population(Settings<T> settings) {
         this.settings = settings;
@@ -99,6 +99,7 @@ public class Population<T extends Fitness> {
 
     private Population<T> selection() {
         Population<T> p = new Population<>(settings);
+        p.listeners = listeners;
         while (!p.isSelectionTargetMet()) {
             T e = selectElement();
             if (p.addElement(e))

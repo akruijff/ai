@@ -57,40 +57,16 @@ public class MainGA {
         settings.setMutationFunction((p, c) -> c.mutate(STEP_SIZE));
         settings.setBestPopulationFunc(new BestPopulationSelectionFunction());
 
-        Population<Chromosome> initial = new Population<>(settings);
-        initial.addPopulationListener(new PopulationListener<Chromosome>() {
-            @Override
-            public void initialPopulation(Population<Chromosome> p) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void evolvedPopulation(Population<Chromosome> p) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void selectedChromosome(Chromosome c) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void crossoverChromosome(Chromosome c) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void mutatedChromosome(Chromosome c) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        });
+        Population<Chromosome> p = new Population<>(settings);
+        p.addPopulationListener(new DrawPopulationListener(canvas));
+        p.init();
 
         /*
          * The algorithm terminates if the population has converged (does not produce offspring which
          * are significantly different from the previous generation). Then it is said that the genetic
          * algorithm has provided a set of solutions to our problem.
          */
-        Population<Chromosome> best = initial.evolution(new MaxEvolutionStopCondition<>(10));
+        Population<Chromosome> best = p.evolution(new MaxEvolutionStopCondition<>(10));
         System.out.println("Evolution count: " + settings.getEvolutionCount());
         System.out.println("Best chromosone: " + best.getBest());
         canvas.close();
@@ -107,6 +83,12 @@ public class MainGA {
                 pixels[x + canvas.width() * y] = c;
             }
         canvas.updatePixels(pixels);
+    }
+
+    private static void drawChromsome(Canvas canvas, Chromosome c) {
+        int x = (int) (canvas.width() * c.x / 4d);
+        int y = (int) (canvas.height() * (4 - c.y) / 4);
+        canvas.circle(x, y, 4);
     }
 
     public static class SimpleFitnessFunction
@@ -149,4 +131,38 @@ public class MainGA {
         }
     }
 
+    private static class DrawPopulationListener
+            implements PopulationListener<Chromosome> {
+
+        private final Canvas canvas;
+
+        public DrawPopulationListener(Canvas canvas) {
+            this.canvas = canvas;
+        }
+
+        @Override
+        public void initialPopulation(Population<Chromosome> p) {
+            evolvedPopulation(p);
+        }
+
+        @Override
+        public void evolvedPopulation(Population<Chromosome> p) {
+            drawBackground(canvas);
+            for (Chromosome c : p.getElements())
+                drawChromsome(canvas, c);
+            canvas.repait();
+        }
+
+        @Override
+        public void selectedChromosome(Chromosome c) {
+        }
+
+        @Override
+        public void crossoverChromosome(Chromosome c) {
+        }
+
+        @Override
+        public void mutatedChromosome(Chromosome c) {
+        }
+    }
 }

@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 
 public class Settings<T extends Fitness> {
 
-    int poolSize = 1024;
+    int poolSize = 128;
     int preventLoop = poolSize;
     int selectionSize = poolSize / 2;
     double mutationChance = 0.01;

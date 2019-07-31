@@ -77,7 +77,7 @@ public class Canvas {
         img.background(c);
     }
 
-    private void circle(int x, int y, int r) {
+    public void circle(int x, int y, int r) {
         img.circle(x, y, r);
     }
 
@@ -94,5 +94,10 @@ public class Canvas {
     }
 
     public void close() {
+    }
+
+    public void repait() {
+        img.invalidate();
+        img.repaint();
     }
 }
