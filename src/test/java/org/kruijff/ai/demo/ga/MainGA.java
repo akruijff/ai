@@ -61,7 +61,7 @@ public class MainGA {
          * are significantly different from the previous generation). Then it is said that the genetic
          * algorithm has provided a set of solutions to our problem.
          */
-        Population<Chromosome> best = p.evolution(new MaxEvolutionStopCondition<>(10));
+        Population<Chromosome> best = p.evolution(new MaxEvolutionStopCondition<>(200));
         System.out.println("Evolution count: " + settings.getEvolutionCount());
         System.out.println("Best chromosone: " + best.getBest());
         canvas.close();
