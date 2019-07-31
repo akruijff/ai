@@ -28,8 +28,6 @@
  */
 package org.kruijff.ai.demo.ga;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import static java.lang.Math.random;
 import java.util.List;
 import java.util.function.BiFunction;
