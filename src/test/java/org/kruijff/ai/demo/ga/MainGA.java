@@ -51,7 +51,6 @@ public class MainGA {
         settings.setSelectFunction(new SimpleFitnessFunction());
         settings.setCrossoverFunction((left, rigth) -> new Chromosome(left.x, rigth.y));
         settings.setMutationFunction((p, c) -> c.mutate(STEP_SIZE));
-        settings.setBestPopulationFunc(new BestPopulationSelectionFunction());
 
         Population<Chromosome> p = new Population<>(settings);
         p.addPopulationListener(canvas);
@@ -91,20 +90,6 @@ public class MainGA {
         private boolean isChromosomeSelected(Chromosome c, double sum) {
             double chance = c.fitness() / sum;
             return chance < random();
-        }
-    }
-
-    private static class BestPopulationSelectionFunction
-            implements BiFunction<Population<Chromosome>, Population<Chromosome>, Population<Chromosome>> {
-
-        @Override
-        public Population<Chromosome> apply(Population<Chromosome> previous, Population<Chromosome> current) {
-            if (previous == null)
-                return current;
-            else if (previous.getBest().fitness() >= current.getBest().fitness())
-                return previous;
-            else
-                return current;
         }
     }
 }

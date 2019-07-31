@@ -45,7 +45,6 @@ public class Settings<T extends Fitness> {
     Function<List<T>, T> selectFunc;
     BiFunction<T, T, T> crossoverFunc;
     BiConsumer<Population<T>, T> mutationFunc;
-    BiFunction<Population<T>, Population<T>, Population<T>> bestPopulationFunc = (previous, current) -> current;
 
     public int getEvolutionCount() {
         return evolutionCount;
@@ -82,9 +81,5 @@ public class Settings<T extends Fitness> {
 
     public void setMutationFunction(BiConsumer<Population<T>, T> f) {
         this.mutationFunc = f;
-    }
-
-    public void setBestPopulationFunc(BiFunction<Population<T>, Population<T>, Population<T>> f) {
-        this.bestPopulationFunc = f;
     }
 }
