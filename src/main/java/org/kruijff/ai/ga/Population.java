@@ -73,11 +73,11 @@ public class Population<T extends Fitness> {
     public Population<T> init() {
         while (pool.size() < settings.poolSize)
             pool.add(settings.initFunc.get());
+        listeners.initialPopulation(this);
         return this;
     }
 
     public Population<T> evolution(StopCondition<T> stopCondition) {
-        listeners.initialPopulation(this);
         Population<T> current = this;
         stopCondition.apply(this);
         while (true) {
@@ -89,11 +89,12 @@ public class Population<T extends Fitness> {
     }
 
     private Population<T> evolve() {
+        listeners.startEvolvingPopulation(this);
         Population<T> current = selection();
         current.crossover();
         current.mutation();
         ++settings.evolutionCount;
-        listeners.evolvedPopulation(this);
+        listeners.endEvolvingPopulation(this);
         return current;
     }
 
@@ -227,9 +228,15 @@ public class Population<T extends Fitness> {
         }
 
         @Override
-        public void evolvedPopulation(Population<T> p) {
+        public void startEvolvingPopulation(Population<T> p) {
             for (PopulationListener<T> l : list)
-                l.evolvedPopulation(p);
+                l.startEvolvingPopulation(p);
+        }
+
+        @Override
+        public void endEvolvingPopulation(Population<T> p) {
+            for (PopulationListener<T> l : list)
+                l.endEvolvingPopulation(p);
         }
 
         @Override

@@ -49,7 +49,7 @@ public class MainGA {
         Settings<Chromosome> settings = new Settings<>();
         // @TODO Test for functions set
         // @TODO Test for functions returns null
-        settings.setInitFunction(() -> new Chromosome(random(), random()));
+        settings.setInitFunction(() -> new Chromosome(random() / 10, random() / 10));
         settings.setSelectFunction(new SimpleFitnessFunction());
         settings.setCrossoverFunction((left, rigth) -> new Chromosome(left.x, rigth.y));
         settings.setMutationFunction((p, c) -> c.mutate(STEP_SIZE));
@@ -140,27 +140,32 @@ public class MainGA {
 
         @Override
         public void initialPopulation(Population<Chromosome> p) {
-            evolvedPopulation(p);
+            endEvolvingPopulation(p);
         }
 
         @Override
-        public void evolvedPopulation(Population<Chromosome> p) {
+        public void startEvolvingPopulation(Population<Chromosome> p) {
             drawBackground(canvas);
-            for (Chromosome c : p.getElements())
-                drawChromsome(canvas, c);
-            canvas.repait();
         }
 
         @Override
         public void selectedChromosome(Chromosome c) {
+            drawChromsome(canvas, c);
         }
 
         @Override
         public void crossoverChromosome(Chromosome c) {
+            drawChromsome(canvas, c);
         }
 
         @Override
         public void mutatedChromosome(Chromosome c) {
+            drawChromsome(canvas, c);
+        }
+
+        @Override
+        public void endEvolvingPopulation(Population<Chromosome> p) {
+            canvas.repaint();
         }
     }
 }

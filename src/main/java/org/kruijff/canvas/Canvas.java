@@ -96,7 +96,7 @@ public class Canvas {
     public void close() {
     }
 
-    public void repait() {
+    public void repaint() {
         img.invalidate();
         img.repaint();
     }
