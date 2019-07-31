@@ -70,8 +70,11 @@ public class MainGA {
     public static class SimpleFitnessFunction
             implements Function<List<Chromosome>, Chromosome> {
 
+        private double r;
+
         @Override
         public Chromosome apply(List<Chromosome> list) {
+            r = random();
             return selectChromosomeOrNull(list);
         }
 
@@ -88,8 +91,8 @@ public class MainGA {
         }
 
         private boolean isChromosomeSelected(Chromosome c, double sum) {
-            double chance = c.fitness() / sum;
-            return chance < random();
+            r -= c.fitness() / sum;
+            return r < 0;
         }
     }
 }
