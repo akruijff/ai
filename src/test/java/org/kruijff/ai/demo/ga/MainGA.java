@@ -33,18 +33,16 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.kruijff.ai.ga.Population;
-import org.kruijff.ai.ga.PopulationListener;
 import org.kruijff.ai.ga.Settings;
 import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
-import org.kruijff.canvas.Canvas;
 
 public class MainGA {
 
     private static final double STEP_SIZE = 0.1;
 
     public static void main(String[] args) {
-        Canvas canvas = new Canvas(640, 480);
-        drawBackground(canvas);
+        HillClimbingCanvas canvas = new HillClimbingCanvas(640, 480);
+        canvas.drawBackground();
 
         Settings<Chromosome> settings = new Settings<>();
         // @TODO Test for functions set
@@ -56,7 +54,7 @@ public class MainGA {
         settings.setBestPopulationFunc(new BestPopulationSelectionFunction());
 
         Population<Chromosome> p = new Population<>(settings);
-        p.addPopulationListener(new DrawPopulationListener(canvas));
+        p.addPopulationListener(canvas);
         p.init();
 
         /*
@@ -68,25 +66,6 @@ public class MainGA {
         System.out.println("Evolution count: " + settings.getEvolutionCount());
         System.out.println("Best chromosone: " + best.getBest());
         canvas.close();
-    }
-
-    private static void drawBackground(Canvas canvas) {
-        int pixels[] = canvas.loadPixels();
-        for (int x = 0; x < canvas.width(); ++x)
-            for (int y = 0; y < canvas.height(); ++y) {
-                double xx = 4d * x / canvas.width();
-                double yy = 4d * (canvas.height() - y) / canvas.height();
-                int f = (int) Chromosome.fitness(xx, yy);
-                int c = Canvas.color(f % 256);
-                pixels[x + canvas.width() * y] = c;
-            }
-        canvas.updatePixels(pixels);
-    }
-
-    private static void drawChromsome(Canvas canvas, Chromosome c) {
-        int x = (int) (canvas.width() * c.x / 4d);
-        int y = (int) (canvas.height() * (4 - c.y) / 4);
-        canvas.circle(x, y, 4);
     }
 
     public static class SimpleFitnessFunction
@@ -126,46 +105,6 @@ public class MainGA {
                 return previous;
             else
                 return current;
-        }
-    }
-
-    private static class DrawPopulationListener
-            implements PopulationListener<Chromosome> {
-
-        private final Canvas canvas;
-
-        public DrawPopulationListener(Canvas canvas) {
-            this.canvas = canvas;
-        }
-
-        @Override
-        public void initialPopulation(Population<Chromosome> p) {
-            endEvolvingPopulation(p);
-        }
-
-        @Override
-        public void startEvolvingPopulation(Population<Chromosome> p) {
-            drawBackground(canvas);
-        }
-
-        @Override
-        public void selectedChromosome(Chromosome c) {
-            drawChromsome(canvas, c);
-        }
-
-        @Override
-        public void crossoverChromosome(Chromosome c) {
-            drawChromsome(canvas, c);
-        }
-
-        @Override
-        public void mutatedChromosome(Chromosome c) {
-            drawChromsome(canvas, c);
-        }
-
-        @Override
-        public void endEvolvingPopulation(Population<Chromosome> p) {
-            canvas.repaint();
         }
     }
 }
