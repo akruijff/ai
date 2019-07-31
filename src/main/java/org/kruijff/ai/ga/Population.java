@@ -41,6 +41,7 @@ public class Population<T extends Fitness> {
     private final Settings<T> settings;
     private final List<T> pool;
     private int preventLoop;
+    private final PopulationListenerCollection<T> listeners = new PopulationListenerCollection<>();
 
     public Population(Settings<T> settings) {
         this.settings = settings;
@@ -65,6 +66,10 @@ public class Population<T extends Fitness> {
                 && Objects.equals(this.pool, ((Population<?>) obj).pool);
     }
 
+    public void addPopulationListener(PopulationListener<T> l) {
+        listeners.add(l);
+    }
+
     public Population<T> init() {
         while (pool.size() < settings.poolSize)
             pool.add(settings.initFunc.get());
@@ -72,6 +77,7 @@ public class Population<T extends Fitness> {
     }
 
     public Population<T> evolution(StopCondition<T> stopCondition) {
+        listeners.initialPopulation(this);
         Population<T> current = this;
         stopCondition.apply(this);
         while (true) {
@@ -87,13 +93,17 @@ public class Population<T extends Fitness> {
         current.crossover();
         current.mutation();
         ++settings.evolutionCount;
+        listeners.evolvedPopulation(this);
         return current;
     }
 
     private Population<T> selection() {
         Population<T> p = new Population<>(settings);
-        while (!p.isSelectionTargetMet())
-            p.addElement(selectElement());
+        while (!p.isSelectionTargetMet()) {
+            T e = selectElement();
+            if (p.addElement(e))
+                listeners.selectedChromosome(e);
+        }
         return p;
     }
 
@@ -105,15 +115,16 @@ public class Population<T extends Fitness> {
         return settings.selectFunc.apply(pool);
     }
 
-    private void addElement(T e) {
-        addElement(e, Collections.EMPTY_LIST);
+    private boolean addElement(T e) {
+        return addElement(e, Collections.EMPTY_LIST);
     }
 
     private void crossover() {
         Population<T> p = new Population<>(settings);
         while (!p.isCrossoverTargetMet(this)) {
             T e = createElement();
-            p.addElement(e, pool);
+            if (p.addElement(e, pool))
+                listeners.crossoverChromosome(e);
         }
         addAll(p);
     }
@@ -128,11 +139,14 @@ public class Population<T extends Fitness> {
         return settings.crossoverFunc.apply(first, second);
     }
 
-    private void addElement(T e, List<T> other) {
-        if (e != null && !pool.contains(e) && !other.contains(e))
+    private boolean addElement(T e, List<T> other) {
+        if (e != null && !pool.contains(e) && !other.contains(e)) {
             pool.add(e);
-        else if (++preventLoop >= settings.preventLoop)
+            return true;
+        }
+        if (++preventLoop >= settings.preventLoop)
             pool.add(settings.initFunc.get());
+        return false;
     }
 
     private void addAll(Population<T> other) {
@@ -141,8 +155,10 @@ public class Population<T extends Fitness> {
 
     private void mutation() {
         for (T e : pool)
-            if (shouldMutate())
+            if (shouldMutate()) {
                 settings.mutationFunc.accept(this, e);
+                listeners.mutatedChromosome(e);
+            }
     }
 
     private boolean shouldMutate() {
@@ -192,5 +208,45 @@ public class Population<T extends Fitness> {
                 .map(c -> c.fitness())
                 .reduce(0d, (a, b) -> a + b);
         return pool.size() > 0 ? sum / pool.size() : 0d;
+    }
+
+    private class PopulationListenerCollection<T extends Fitness>
+            implements PopulationListener<T> {
+
+        private List<PopulationListener<T>> list = new ArrayList<>();
+
+        public void add(PopulationListener<T> l) {
+            list.add(l);
+        }
+
+        @Override
+        public void initialPopulation(Population<T> p) {
+            for (PopulationListener<T> l : list)
+                l.initialPopulation(p);
+        }
+
+        @Override
+        public void evolvedPopulation(Population<T> p) {
+            for (PopulationListener<T> l : list)
+                l.evolvedPopulation(p);
+        }
+
+        @Override
+        public void selectedChromosome(T c) {
+            for (PopulationListener<T> l : list)
+                l.selectedChromosome(c);
+        }
+
+        @Override
+        public void crossoverChromosome(T c) {
+            for (PopulationListener<T> l : list)
+                l.crossoverChromosome(c);
+        }
+
+        @Override
+        public void mutatedChromosome(T c) {
+            for (PopulationListener<T> l : list)
+                l.mutatedChromosome(c);
+        }
     }
 }

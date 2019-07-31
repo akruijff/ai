@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.kruijff.ai.ga.Population;
+import org.kruijff.ai.ga.PopulationListener;
 import org.kruijff.ai.ga.Settings;
 import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
 import org.kruijff.canvas.Canvas;
@@ -57,6 +58,32 @@ public class MainGA {
         settings.setBestPopulationFunc(new BestPopulationSelectionFunction());
 
         Population<Chromosome> initial = new Population<>(settings);
+        initial.addPopulationListener(new PopulationListener<Chromosome>() {
+            @Override
+            public void initialPopulation(Population<Chromosome> p) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void evolvedPopulation(Population<Chromosome> p) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void selectedChromosome(Chromosome c) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void crossoverChromosome(Chromosome c) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void mutatedChromosome(Chromosome c) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
 
         /*
          * The algorithm terminates if the population has converged (does not produce offspring which
