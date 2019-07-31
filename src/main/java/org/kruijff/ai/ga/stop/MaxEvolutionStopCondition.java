@@ -26,11 +26,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai.ga;
+package org.kruijff.ai.ga.stop;
 
-public interface StopCondition<T extends Fitness> {
+import java.util.ArrayList;
+import java.util.List;
+import org.kruijff.ai.ga.Fitness;
+import org.kruijff.ai.ga.Population;
+import org.kruijff.ai.ga.StopCondition;
 
-    public boolean apply(Population<T> p);
-    
-    public Population<T> get();
+public class MaxEvolutionStopCondition<T extends Fitness>
+        implements StopCondition<T> {
+
+    private List<Population<T>> list = new ArrayList<>();
+    private int count;
+    private final int max;
+
+    public MaxEvolutionStopCondition(int max) {
+        this.max = max;
+    }
+
+    @Override
+    public String toString() {
+        return "count=" + count + ", max=" + max;
+    }
+
+    @Override
+    public boolean apply(Population<T> current) {
+        list.add(current);
+        return ++count >= max;
+    }
+
+    @Override
+    public Population<T> get() {
+        return list.stream()
+                .max((l, r) -> l.getMaxFitness() < r.getMaxFitness() ? -1 : 1)
+                .get();
+    }
+
+    public Population<T> get(int index) {
+        return list.get(index);
+    }
+
+    public int size() {
+        return list.size();
+    }
 }

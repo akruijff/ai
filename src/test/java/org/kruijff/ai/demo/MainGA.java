@@ -34,7 +34,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.kruijff.ai.ga.Population;
 import org.kruijff.ai.ga.Settings;
-import org.kruijff.ai.ga.StopCondition;
+import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
 
 public class MainGA {
 
@@ -57,14 +57,7 @@ public class MainGA {
          * are significantly different from the previous generation). Then it is said that the genetic
          * algorithm has provided a set of solutions to our problem.
          */
-        Population<Chromosome> best = initial.evolution(new StopCondition<Chromosome>() {
-            @Override
-            public boolean apply(Population<Chromosome> previous, Population<Chromosome> current) {
-                Chromosome p = previous.getBest();
-                Chromosome c = current.getBest();
-                return p != null && c.fitness() < p.fitness();
-            }
-        });
+        Population<Chromosome> best = initial.evolution(new MaxEvolutionStopCondition<>(10));
         System.out.println("Evolution count: " + settings.getEvolutionCount());
         System.out.println("Best chromosone: " + best.getBest());
     }
@@ -108,4 +101,5 @@ public class MainGA {
                 return current;
         }
     }
+
 }

@@ -72,11 +72,12 @@ public class Population<T extends Fitness> {
 
     public Population<T> evolution(StopCondition<T> stopCondition) {
         Population<T> current = this;
+        stopCondition.apply(this);
         while (true) {
             Population<T> previous = current;
             current = previous.evolve();
-            if (stopCondition.apply(previous, current))
-                return settings.bestPopulationFunc.apply(previous, current);
+            if (stopCondition.apply(current))
+                return stopCondition.get();
         }
     }
 
@@ -159,11 +160,36 @@ public class Population<T extends Fitness> {
         return unmodifiableList(pool);
     }
 
+    public T getWorst() {
+        return pool.stream()
+                .min((left, right) -> left.fitness() < right.fitness() ? -1 : 1)
+                .get();
+    }
+
     public T getBest() {
-        T best = null;
-        for (T t : pool)
-            if (best == null || best.fitness() < t.fitness())
-                best = t;
-        return best;
+        return pool.stream()
+                .max((left, right) -> left.fitness() < right.fitness() ? -1 : 1)
+                .get();
+    }
+
+    public double getMinFitness() {
+        return pool.stream()
+                .map(c -> c.fitness())
+                .min((left, right) -> left < right ? -1 : 1)
+                .orElse(0d);
+    }
+
+    public double getMaxFitness() {
+        return pool.stream()
+                .map(c -> c.fitness())
+                .max((left, right) -> left < right ? -1 : 1)
+                .orElse(0d);
+    }
+
+    public double getAvgFitness() {
+        double sum = pool.stream()
+                .map(c -> c.fitness())
+                .reduce(0d, (a, b) -> a + b);
+        return pool.size() > 0 ? sum / pool.size() : 0d;
     }
 }

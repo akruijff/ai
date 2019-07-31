@@ -28,9 +28,17 @@
  */
 package org.kruijff.ai.ga;
 
-public interface StopCondition<T extends Fitness> {
+import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
 
-    public boolean apply(Population<T> p);
-    
-    public Population<T> get();
+public class TestEvolutionStopCondition<T extends Fitness>
+        extends MaxEvolutionStopCondition<T> {
+
+    public TestEvolutionStopCondition(int max) {
+        super(max);
+    }
+
+    @Override
+    public Population<T> get() {
+        return super.get(super.size() - 1);
+    }
 }

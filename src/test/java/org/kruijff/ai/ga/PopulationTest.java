@@ -39,6 +39,7 @@ import org.junit.Test;
 public class PopulationTest {
 
     private Settings<ID> settings;
+    private TestEvolutionStopCondition<ID> stop;
 
     @Before
     public void setup() {
@@ -47,6 +48,7 @@ public class PopulationTest {
         settings.setPoolSize(8);
         settings.setSelectionSize(8);
         settings.initFunc = ID::new;
+        stop = new TestEvolutionStopCondition<>(2);
     }
 
     @After
@@ -72,7 +74,7 @@ public class PopulationTest {
         settings.selectFunc = list -> list.get(0);
         settings.crossoverFunc = (left, rigth) -> left;
         Population<ID> p1 = new Population<>(settings).init();
-        Population<ID> p2 = p1.evolution((previous, current) -> true);
+        Population<ID> p2 = p1.evolution(stop);
         assertEquals(settings.poolSize, p1.size());
         assertEquals(settings.poolSize, p2.size());
         assertPopulationContains(p2, new ID(1));
@@ -87,7 +89,7 @@ public class PopulationTest {
         settings.selectFunc = new SelectNthElementFunction();
         settings.crossoverFunc = (left, rigth) -> left;
         Population<ID> p1 = new Population<>(settings).init();
-        Population<ID> p2 = p1.evolution((previous, current) -> true);
+        Population<ID> p2 = p1.evolution(stop);
         assertEquals(settings.poolSize, p1.size());
         assertEquals(settings.poolSize, p2.size());
         for (int i = 0; i < settings.selectionSize; ++i)
@@ -103,7 +105,7 @@ public class PopulationTest {
         settings.selectFunc = new SelectNthElementFunction();
         settings.crossoverFunc = (left, rigth) -> new ID();
         Population<ID> p1 = new Population<>(settings).init();
-        Population<ID> p2 = p1.evolution((previous, current) -> true);
+        Population<ID> p2 = p1.evolution(stop);
         assertEquals(settings.poolSize, p1.size());
         assertEquals(settings.poolSize, p2.size());
         for (int i = 1; i < settings.selectionSize; ++i)
@@ -118,7 +120,7 @@ public class PopulationTest {
         settings.selectFunc = new SelectNthElementFunction();
         settings.mutationFunc = (p, id) -> id.setValue(id.getValue() + settings.poolSize);
         Population<ID> p1 = new Population<>(settings).init();
-        Population<ID> p2 = p1.evolution((previous, current) -> true);
+        Population<ID> p2 = p1.evolution(stop);
         assertEquals(settings.poolSize, p1.size());
         assertEquals(settings.poolSize, p2.size());
         for (int i = 0; i < settings.poolSize; ++i)
