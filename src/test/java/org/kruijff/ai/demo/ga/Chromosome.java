@@ -88,8 +88,8 @@ public class Chromosome
 
     private void step(double step) {
         if (random() < .5)
-            this.x += step;
+            x += step;
         else
-            this.y += step;
+            y += step;
     }
 }
