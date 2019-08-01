@@ -39,6 +39,6 @@ public class TestEvolutionStopCondition<T extends Fitness>
 
     @Override
     public Population<T> get() {
-        return super.get(super.size() - 1);
+        return super.get(-1);
     }
 }

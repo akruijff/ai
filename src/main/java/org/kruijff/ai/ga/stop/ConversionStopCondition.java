@@ -31,22 +31,31 @@ package org.kruijff.ai.ga.stop;
 import org.kruijff.ai.ga.Fitness;
 import org.kruijff.ai.ga.Population;
 
-public class MaxEvolutionStopCondition<T extends Fitness>
+/**
+ * The algorithm terminates if the population has converged (does not produce
+ * offspring which are significantly different from the previous generation).
+ * Then it is said that the genetic algorithm has provided a set of solutions
+ * to our problem.
+ */
+public class ConversionStopCondition<T extends Fitness>
         extends AbstractStopCondition<T> {
 
-    private final int max;
+    private final double factor;
 
-    public MaxEvolutionStopCondition(int max) {
-        this.max = max;
+    public ConversionStopCondition(double factor) {
+        this.factor = factor;
     }
 
     @Override
-    public String toString() {
-        return "count=" + count + ", max=" + max;
+    protected boolean doApply(Population<T> current) {
+        if (list.size() >= 2)
+            return isConversed(get(-2), get(-1));
+        return false;
     }
 
-    @Override
-    public boolean doApply(Population<T> current) {
-        return ++count >= max;
+    private boolean isConversed(Population<T> current, Population<T> previous) {
+        double max = current.getMaxFitness() / previous.getMaxFitness();
+        double avg = current.getAvgFitness() / previous.getAvgFitness();
+        return max < factor && avg < factor;
     }
 }

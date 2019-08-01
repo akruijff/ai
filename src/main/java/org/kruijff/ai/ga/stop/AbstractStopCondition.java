@@ -28,25 +28,46 @@
  */
 package org.kruijff.ai.ga.stop;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.kruijff.ai.ga.Fitness;
 import org.kruijff.ai.ga.Population;
+import org.kruijff.ai.ga.StopCondition;
 
-public class MaxEvolutionStopCondition<T extends Fitness>
-        extends AbstractStopCondition<T> {
+public abstract class AbstractStopCondition<T extends Fitness>
+        implements StopCondition<T> {
 
-    private final int max;
-
-    public MaxEvolutionStopCondition(int max) {
-        this.max = max;
-    }
+    protected int count;
+    protected List<Population<T>> list = new ArrayList<>();
 
     @Override
     public String toString() {
-        return "count=" + count + ", max=" + max;
+        return "count=" + count;
     }
 
     @Override
-    public boolean doApply(Population<T> current) {
-        return ++count >= max;
+    public final boolean apply(Population<T> current) {
+        ++count;
+        list.add(current);
+        return doApply(current);
     }
+
+    @Override
+    public Population<T> get() {
+        return list.stream()
+                .max((l, r) -> l.getMaxFitness() < r.getMaxFitness() ? -1 : 1)
+                .get();
+    }
+
+    public final Population<T> get(int index) {
+        if (index < 0)
+            index = list.size() - index;
+        return list.get(index);
+    }
+
+    public final int size() {
+        return list.size();
+    }
+
+    protected abstract boolean doApply(Population<T> current);
 }
