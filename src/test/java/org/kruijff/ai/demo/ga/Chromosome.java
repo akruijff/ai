@@ -49,6 +49,8 @@ public class Chromosome
     double y;
 
     public static double fitness(double x, double y) {
+        if (x < 0 || x > 4 || y < 0 || y > 4)
+            return 0;
         return C * pow(sin(W * x), 2) * pow(sin(W * y), 2) * exp((x + y) / O);
     }
 
