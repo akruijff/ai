@@ -42,7 +42,6 @@ public class HillClimbingCanvas
 
     @Override
     public void initialPopulation(Population<Chromosome> p) {
-        drawBackground();
     }
 
     @Override
@@ -62,19 +61,28 @@ public class HillClimbingCanvas
             }
         updatePixels(pixels);
     }
+    private static final int SELECTED_COLOR = color(255, 255, 0);
+    private static final int CROSSOVER_COLOR = color(0, 0, 255);
+    private static final int MUTATED_COLOR = color(255, 0, 255);
 
     @Override
     public void selectedChromosome(Chromosome c) {
+        fill(SELECTED_COLOR);
+        noStroke();
         drawChromsome(c);
     }
 
     @Override
     public void crossoverChromosome(Chromosome c) {
+        fill(CROSSOVER_COLOR);
+        noStroke();
         drawChromsome(c);
     }
 
     @Override
     public void mutatedChromosome(Chromosome c) {
+        fill(MUTATED_COLOR);
+        noStroke();
         drawChromsome(c);
     }
 
