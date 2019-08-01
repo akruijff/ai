@@ -26,43 +26,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai.demo.ga;
+package org.kruijff.ai.ga.fitness;
 
-import org.kruijff.ai.ga.fitness.SimpleFitnessFunction;
-import static java.lang.Math.pow;
-import static java.lang.Math.random;
 import java.util.List;
-import java.util.function.BiFunction;
-import org.kruijff.ai.ga.Population;
-import org.kruijff.ai.ga.Settings;
-import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
+import org.kruijff.ai.ga.Fitness;
 
-public class MainGA {
+public class SimpleFitnessFunction<T extends Fitness>
+        extends AbstractFitnessFunction<T> {
 
-    private static final double STEP_SIZE = 0.1;
+    private double sum;
 
-    public static void main(String[] args) {
-        HillClimbingCanvas canvas = new HillClimbingCanvas(640, 480);
-        canvas.drawBackground();
-
-        Settings<Chromosome> settings = new Settings<>();
-        // @TODO Test for functions set
-        // @TODO Test for functions returns null
-        settings.setInitFunction(() -> new Chromosome(random() / 10, random() / 10));
-        settings.setSelectFunction(new SimpleFitnessFunction());
-        settings.setCrossoverFunction((left, rigth) -> new Chromosome(left.x, rigth.y));
-        settings.setMutationFunction((p, c) -> c.mutate(STEP_SIZE));
-
-        Population<Chromosome> p = new Population<>(settings);
-        p.addPopulationListener(canvas);
-        p.init();
-
-        Population<Chromosome> best = p.evolution(new MaxEvolutionStopCondition<>(200));
-        System.out.println("Evolution count: " + settings.getEvolutionCount());
-        System.out.println("Best chromosone: " + best.getBest());
-        canvas.close();
+    @Override
+    protected void doBefore(List<T> source, List<T> nextPool) {
+        sum = getSumOfPostiveFitnessValues(source);
     }
 
+    private Double getSumOfPostiveFitnessValues(List<T> list) {
+        return list.stream()
+                .map((c) -> c.fitness())
+                .map((f) -> f != null && f > 0 ? f : 0)
+                .reduce(0d, (a, b) -> a + b);
+    }
 
-
+    @Override
+    protected boolean isChromosomeSelected(T c) {
+        r -= c.fitness() / sum;
+        return r < 0;
+    }
 }

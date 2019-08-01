@@ -26,43 +26,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai.demo.ga;
+package org.kruijff.ai.ga.fitness;
 
-import org.kruijff.ai.ga.fitness.SimpleFitnessFunction;
-import static java.lang.Math.pow;
-import static java.lang.Math.random;
 import java.util.List;
 import java.util.function.BiFunction;
-import org.kruijff.ai.ga.Population;
-import org.kruijff.ai.ga.Settings;
-import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
+import org.kruijff.ai.ga.Fitness;
 
-public class MainGA {
+public abstract class AbstractFitnessFunction<T extends Fitness>
+        implements BiFunction<List<T>, List<T>, T> {
 
-    private static final double STEP_SIZE = 0.1;
+    protected double r;
 
-    public static void main(String[] args) {
-        HillClimbingCanvas canvas = new HillClimbingCanvas(640, 480);
-        canvas.drawBackground();
-
-        Settings<Chromosome> settings = new Settings<>();
-        // @TODO Test for functions set
-        // @TODO Test for functions returns null
-        settings.setInitFunction(() -> new Chromosome(random() / 10, random() / 10));
-        settings.setSelectFunction(new SimpleFitnessFunction());
-        settings.setCrossoverFunction((left, rigth) -> new Chromosome(left.x, rigth.y));
-        settings.setMutationFunction((p, c) -> c.mutate(STEP_SIZE));
-
-        Population<Chromosome> p = new Population<>(settings);
-        p.addPopulationListener(canvas);
-        p.init();
-
-        Population<Chromosome> best = p.evolution(new MaxEvolutionStopCondition<>(200));
-        System.out.println("Evolution count: " + settings.getEvolutionCount());
-        System.out.println("Best chromosone: " + best.getBest());
-        canvas.close();
+    @Override
+    public T apply(List<T> source, List<T> nextPool) {
+        r = Math.random();
+        doBefore(source, nextPool);
+        T f = null;
+        for (T e : source)
+            if (!isChromosomeAlreayInNextPool(nextPool, e)) {
+                f = e;
+                if (isChromosomeSelected(e))
+                    return e;
+            }
+        return f;
     }
 
+    protected abstract void doBefore(List<T> source, List<T> nextPool);
 
+    private boolean isChromosomeAlreayInNextPool(List<T> nextPool, T c) {
+        return nextPool.contains(c);
+    }
 
+    protected abstract boolean isChromosomeSelected(T e);
 }
