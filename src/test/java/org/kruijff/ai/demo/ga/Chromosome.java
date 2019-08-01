@@ -29,6 +29,8 @@
 package org.kruijff.ai.demo.ga;
 
 import static java.lang.Double.doubleToLongBits;
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
 import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 import static java.lang.Math.random;
@@ -81,15 +83,10 @@ public class Chromosome
     }
 
     void mutate(double stepSize) {
-        double r = Math.random() - .5;
+        double r = random() - .5;
         double step = 2 * stepSize * r;
-        step(step);
-    }
-
-    private void step(double step) {
-        if (random() < .5)
-            x += step;
-        else
-            y += step;
+        double a = 2 * PI * random();
+        x += step * sin(a);
+        y += step * cos(a);
     }
 }
