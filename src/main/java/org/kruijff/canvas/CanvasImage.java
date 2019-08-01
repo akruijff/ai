@@ -35,14 +35,15 @@ import java.awt.image.BufferedImage;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import java.util.Arrays;
 import javax.swing.JLabel;
-import static org.kruijff.canvas.Canvas.color;
 
 public class CanvasImage
         extends JLabel {
 
     private final BufferedImage img;
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
+    private Color fillColor = new Color(255, 0, 0);
+    private Color strokeColor = new Color(255, 255, 255);
 
     public CanvasImage(int width, int height) {
         img = new BufferedImage(width, height, TYPE_INT_RGB);
@@ -78,21 +79,41 @@ public class CanvasImage
         repaint();
     }
 
+    void noFill() {
+        fillColor = null;
+    }
+
+    void fill(int c) {
+        fillColor = new Color(c);
+    }
+
+    void noStroke() {
+        strokeColor = null;
+    }
+
+    void stroke(int c) {
+        strokeColor = new Color(c);
+    }
+
     void circle(int x, int y, int r) {
         Graphics g = img.getGraphics();
-        Color fillColor = new Color(color(255, 255, 255));
-        Color edgeColor = new Color(color(255, 0, 0));
-        g.setColor(fillColor);
-        g.drawOval(x, y, r, r);
-        g.setColor(edgeColor);
-        g.fillOval(x, y, r, r);
+        if (fillColor != null) {
+            g.setColor(fillColor);
+            g.fillOval(x, y, r, r);
+        }
+        if (strokeColor != null) {
+            g.setColor(strokeColor);
+            g.drawOval(x, y, r, r);
+        }
     }
 
     void point(int x, int y, int c) {
         if (x < 0 || y < 0 || x >= width || y >= height)
             return;
-        img.setRGB(x, y, c);
-        invalidate();
-        repaint();
+        if (strokeColor != null) {
+            img.setRGB(x, y, strokeColor.getRGB());
+            invalidate();
+            repaint();
+        }
     }
 }

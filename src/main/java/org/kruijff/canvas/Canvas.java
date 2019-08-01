@@ -28,6 +28,8 @@
  */
 package org.kruijff.canvas;
 
+import java.awt.Color;
+
 public class Canvas {
 
     private static final long serialVersionUID = 1L;
@@ -75,6 +77,22 @@ public class Canvas {
 
     private void background(int c) {
         img.background(c);
+    }
+
+    public void noFill() {
+        img.noFill();
+    }
+
+    public void fill(int c) {
+        img.fill(c);
+    }
+
+    public void noStroke() {
+        img.noStroke();
+    }
+
+    public void stroke(int c) {
+        img.stroke(c);
     }
 
     public void circle(int x, int y, int r) {
