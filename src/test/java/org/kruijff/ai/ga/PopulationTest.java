@@ -29,7 +29,7 @@
 package org.kruijff.ai.ga;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -46,7 +46,7 @@ public class PopulationTest {
         ID.reset();
         settings = new Settings<>();
         settings.setPoolSize(8);
-        settings.setSelectionSize(8);
+        settings.setEliteSize(8);
         settings.initFunc = ID::new;
         stop = new TestEvolutionStopCondition<>(2);
     }
@@ -69,38 +69,8 @@ public class PopulationTest {
     }
 
     @Test
-    public void selection_loop() {
-        settings.setMutationChance(0);
-        settings.selectFunc = list -> list.get(0);
-        settings.crossoverFunc = (left, rigth) -> left;
-        Population<ID> p1 = new Population<>(settings).init();
-        Population<ID> p2 = p1.evolution(stop);
-        assertEquals(settings.poolSize, p1.size());
-        assertEquals(settings.poolSize, p2.size());
-        assertPopulationContains(p2, new ID(1));
-        for (int i = 1; i < settings.poolSize; ++i)
-            assertPopulationContains(p2, new ID(i + settings.poolSize));
-    }
-
-    @Test
-    public void crossover_loop() {
-        settings.setSelectionSize(3);
-        settings.setMutationChance(0);
-        settings.selectFunc = new SelectNthElementFunction();
-        settings.crossoverFunc = (left, rigth) -> left;
-        Population<ID> p1 = new Population<>(settings).init();
-        Population<ID> p2 = p1.evolution(stop);
-        assertEquals(settings.poolSize, p1.size());
-        assertEquals(settings.poolSize, p2.size());
-        for (int i = 0; i < settings.selectionSize; ++i)
-            assertPopulationContains(p2, new ID(i + 1));
-        for (int i = settings.selectionSize; i < settings.poolSize; ++i)
-            assertPopulationContains(p2, new ID(i + 1 + settings.poolSize - settings.selectionSize));
-    }
-
-    @Test
     public void crossover() {
-        settings.setSelectionSize(3);
+        settings.setEliteSize(3);
         settings.setMutationChance(0);
         settings.selectFunc = new SelectNthElementFunction();
         settings.crossoverFunc = (left, rigth) -> new ID();
@@ -108,9 +78,9 @@ public class PopulationTest {
         Population<ID> p2 = p1.evolution(stop);
         assertEquals(settings.poolSize, p1.size());
         assertEquals(settings.poolSize, p2.size());
-        for (int i = 1; i < settings.selectionSize; ++i)
+        for (int i = 1; i < settings.eliteSize; ++i)
             assertPopulationContains(p2, new ID(i + 1));
-        for (int i = settings.selectionSize; i < settings.selectionSize; ++i)
+        for (int i = settings.eliteSize; i < settings.eliteSize; ++i)
             assertPopulationContains(p2, new ID(i + 1));
     }
 
@@ -131,16 +101,16 @@ public class PopulationTest {
      * This function returns the nth element when it is called the nth time.
      */
     public static class SelectNthElementFunction
-            implements Function<List<ID>, ID> {
+            implements BiFunction<List<ID>, List<ID>, ID> {
 
         private int index = -1;
 
         @Override
-        public ID apply(List<ID> list) {
+        public ID apply(List<ID> sourcePool, List<ID> nextPool) {
             ++index;
-            if (index >= list.size())
+            if (index >= sourcePool.size())
                 index = 0;
-            return list.get(index);
+            return sourcePool.get(index);
         }
     }
 }

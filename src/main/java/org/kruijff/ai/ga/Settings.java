@@ -31,18 +31,16 @@ package org.kruijff.ai.ga;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Settings<T extends Fitness> {
 
     int poolSize = 128;
-    int preventLoop = poolSize;
-    int selectionSize = poolSize / 2;
+    int eliteSize = 2;
     double mutationChance = 0.01;
     int evolutionCount = 0;
     Supplier<T> initFunc;
-    Function<List<T>, T> selectFunc;
+    BiFunction<List<T>, List<T>, T> selectFunc;
     BiFunction<T, T, T> crossoverFunc;
     BiConsumer<Population<T>, T> mutationFunc;
 
@@ -51,16 +49,15 @@ public class Settings<T extends Fitness> {
     }
 
     public void setPoolSize(int size) {
-        preventLoop = size;
         poolSize = size;
-        if (selectionSize > size)
-            selectionSize = size;
+        if (eliteSize > size)
+            eliteSize = size;
     }
 
-    public void setSelectionSize(int size) {
+    public void setEliteSize(int size) {
         if (poolSize < size)
             poolSize = size;
-        selectionSize = size;
+        eliteSize = size;
     }
 
     public void setMutationChance(double chance) {
@@ -71,7 +68,7 @@ public class Settings<T extends Fitness> {
         this.initFunc = f;
     }
 
-    public void setSelectFunction(Function<List<T>, T> f) {
+    public void setSelectFunction(BiFunction<List<T>, List<T>, T> f) {
         this.selectFunc = f;
     }
 

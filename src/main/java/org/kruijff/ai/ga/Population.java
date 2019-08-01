@@ -91,70 +91,56 @@ public class Population<T extends Fitness> {
 
     private Population<T> evolve() {
         listeners.startEvolvingPopulation(this);
-        Population<T> current = selection();
-        current.crossover();
+
+        Population<T> current = new Population<>(settings);
+        current.listeners = listeners;
+        current.elitistSelection(this);
+        current.crossover(this);
         current.mutation();
-        Collections.sort(pool);
+        current.sort();
+
         ++settings.evolutionCount;
         listeners.endEvolvingPopulation(this);
         return current;
     }
 
-    private Population<T> selection() {
-        Population<T> p = new Population<>(settings);
-        p.listeners = listeners;
-        while (!p.isSelectionTargetMet()) {
-            T e = selectElement();
-            if (p.addElement(e))
+    private void elitistSelection(Population<T> source) {
+        for (T e : source.getElements())
+            if (!isElitePoolFull()) {
+                pool.add(e);
                 listeners.selectedChromosome(e);
-        }
-        return p;
+            } else
+                return;
     }
 
-    private boolean isSelectionTargetMet() {
-        return pool.size() >= settings.selectionSize;
+    private boolean isElitePoolFull() {
+        return pool.size() >= settings.eliteSize;
     }
 
-    private T selectElement() {
-        return settings.selectFunc.apply(pool);
+    private void crossover(Population<T> source) {
+        while (!isPoolFull())
+            createChild(source);
     }
 
-    private boolean addElement(T e) {
-        return addElement(e, Collections.EMPTY_LIST);
+    private void createChild(Population<T> source) {
+        T first = settings.selectFunc.apply(source.pool, new Population<>(settings).pool);
+        T second = selectSecondParent(source, first);
+        T child = settings.crossoverFunc.apply(first, second);
+        pool.add(child);
+        listeners.crossoverChromosome(child);
     }
 
-    private void crossover() {
-        Population<T> p = new Population<>(settings);
-        while (!p.isCrossoverTargetMet(this)) {
-            T e = createElement();
-            if (p.addElement(e, pool))
-                listeners.crossoverChromosome(e);
-        }
-        addAll(p);
+    private T selectSecondParent(Population<T> source, T first) {
+        T second = settings.selectFunc.apply(source.pool, new Population<>(settings).pool);
+        return second;
     }
 
-    private boolean isCrossoverTargetMet(Population<T> p) {
-        return pool.size() + p.pool.size() >= settings.poolSize;
+    private boolean isPoolFull() {
+        return pool.size() >= settings.poolSize;
     }
 
-    private T createElement() {
-        T first = settings.selectFunc.apply(pool);
-        T second = settings.selectFunc.apply(pool);
-        return settings.crossoverFunc.apply(first, second);
-    }
-
-    private boolean addElement(T e, List<T> other) {
-        if (e != null && !pool.contains(e) && !other.contains(e)) {
-            pool.add(e);
-            return true;
-        }
-        if (++preventLoop >= settings.preventLoop)
-            pool.add(settings.initFunc.get());
-        return false;
-    }
-
-    private void addAll(Population<T> other) {
-        pool.addAll(other.pool);
+    private void sort() {
+        Collections.sort(pool);
     }
 
     private void mutation() {
