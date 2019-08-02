@@ -45,19 +45,19 @@ public class MainGA {
         HillClimbingCanvas canvas = new HillClimbingCanvas(640, 480);
         canvas.drawBackground();
 
-        Settings<Chromosome> settings = new Settings<>();
+        Settings<PointChromosome> settings = new Settings<>();
         // @TODO Test for functions set
         // @TODO Test for functions returns null
-        settings.setInitFunction(() -> new Chromosome(random() / 10, random() / 10));
+        settings.setInitFunction(() -> new PointChromosome(random() / 10, random() / 10));
         settings.setSelectFunction(new SimpleFitnessFunction());
-        settings.setCrossoverFunction((left, rigth) -> new Chromosome(left.x, rigth.y));
+        settings.setCrossoverFunction((left, rigth) -> new PointChromosome(left.x, rigth.y));
         settings.setMutationFunction((p, c) -> c.mutate(STEP_SIZE));
 
-        Population<Chromosome> p = new Population<>(settings);
+        Population<PointChromosome> p = new Population<>(settings);
         p.addPopulationListener(canvas);
         p.init();
 
-        Population<Chromosome> best = p.evolution(new MaxEvolutionStopCondition<>(200));
+        Population<PointChromosome> best = p.evolution(new MaxEvolutionStopCondition<>(200));
         System.out.println("Evolution count: " + settings.getEvolutionCount());
         System.out.println("Best chromosone: " + best.getBest());
         canvas.close();

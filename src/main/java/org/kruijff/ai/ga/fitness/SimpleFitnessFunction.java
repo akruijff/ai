@@ -29,9 +29,9 @@
 package org.kruijff.ai.ga.fitness;
 
 import java.util.List;
-import org.kruijff.ai.ga.Fitness;
+import org.kruijff.ai.ga.Chromosome;
 
-public class SimpleFitnessFunction<T extends Fitness>
+public class SimpleFitnessFunction<T extends Chromosome>
         extends AbstractFitnessFunction<T> {
 
     private double sum;

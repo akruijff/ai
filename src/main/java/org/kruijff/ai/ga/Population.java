@@ -36,7 +36,7 @@ import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Objects;
 
-public class Population<T extends Fitness> {
+public class Population<T extends Chromosome> {
 
     private final Settings<T> settings;
     private final List<T> pool;
@@ -200,7 +200,7 @@ public class Population<T extends Fitness> {
         return pool.size() > 0 ? sum / pool.size() : 0d;
     }
 
-    private class PopulationListenerCollection<T extends Fitness>
+    private class PopulationListenerCollection<T extends Chromosome>
             implements PopulationListener<T> {
 
         private List<PopulationListener<T>> list = new ArrayList<>();

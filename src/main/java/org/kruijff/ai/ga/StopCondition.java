@@ -28,7 +28,7 @@
  */
 package org.kruijff.ai.ga;
 
-public interface StopCondition<T extends Fitness> {
+public interface StopCondition<T extends Chromosome> {
 
     public boolean apply(Population<T> p);
     

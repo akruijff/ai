@@ -30,7 +30,7 @@ package org.kruijff.ai.ga;
 
 import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
 
-public class TestEvolutionStopCondition<T extends Fitness>
+public class TestEvolutionStopCondition<T extends Chromosome>
         extends MaxEvolutionStopCondition<T> {
 
     public TestEvolutionStopCondition(int max) {

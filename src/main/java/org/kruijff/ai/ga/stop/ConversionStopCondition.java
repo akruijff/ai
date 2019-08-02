@@ -28,8 +28,8 @@
  */
 package org.kruijff.ai.ga.stop;
 
-import org.kruijff.ai.ga.Fitness;
 import org.kruijff.ai.ga.Population;
+import org.kruijff.ai.ga.Chromosome;
 
 /**
  * The algorithm terminates if the population has converged (does not produce
@@ -37,7 +37,7 @@ import org.kruijff.ai.ga.Population;
  * Then it is said that the genetic algorithm has provided a set of solutions
  * to our problem.
  */
-public class ConversionStopCondition<T extends Fitness>
+public class ConversionStopCondition<T extends Chromosome>
         extends AbstractStopCondition<T> {
 
     private final double factor;

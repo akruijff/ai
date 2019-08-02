@@ -33,7 +33,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-public class Settings<T extends Fitness> {
+public class Settings<T extends Chromosome> {
 
     int poolSize = 128;
     int eliteSize = 2;

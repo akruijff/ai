@@ -29,9 +29,9 @@
 package org.kruijff.ai.ga.fitness;
 
 import java.util.List;
-import org.kruijff.ai.ga.Fitness;
+import org.kruijff.ai.ga.Chromosome;
 
-public class FitnessRankedFunction<T extends Fitness>
+public class FitnessRankedFunction<T extends Chromosome>
         extends AbstractFitnessFunction<T> {
 
     private final double pc = .1;

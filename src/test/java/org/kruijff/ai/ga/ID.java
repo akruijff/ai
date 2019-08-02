@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @author Alex de Kruijff <alex.de.kruijff@MazarineBlue.org>
  */
 public class ID
-        implements Fitness, Serializable {
+        implements Chromosome, Serializable {
 
     private static final long serialVersionUID = 1L;
     private static int count = 0;

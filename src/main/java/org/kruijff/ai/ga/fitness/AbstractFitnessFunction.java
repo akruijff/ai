@@ -30,9 +30,9 @@ package org.kruijff.ai.ga.fitness;
 
 import java.util.List;
 import java.util.function.BiFunction;
-import org.kruijff.ai.ga.Fitness;
+import org.kruijff.ai.ga.Chromosome;
 
-public abstract class AbstractFitnessFunction<T extends Fitness>
+public abstract class AbstractFitnessFunction<T extends Chromosome>
         implements BiFunction<List<T>, List<T>, T> {
 
     protected double r;

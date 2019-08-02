@@ -36,10 +36,10 @@ import static java.lang.Math.pow;
 import static java.lang.Math.random;
 import static java.lang.Math.sin;
 import static java.lang.String.format;
-import org.kruijff.ai.ga.Fitness;
+import org.kruijff.ai.ga.Chromosome;
 
-public class Chromosome
-        implements Fitness {
+public class PointChromosome
+        implements Chromosome {
 
     private static final double W = Math.PI;
     private static final double O = 7;
@@ -54,7 +54,7 @@ public class Chromosome
         return C * pow(sin(W * x), 2) * pow(sin(W * y), 2) * exp((x + y) / O);
     }
 
-    public Chromosome(double x, double y) {
+    public PointChromosome(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -75,8 +75,8 @@ public class Chromosome
     @Override
     public boolean equals(Object obj) {
         return this == obj || obj != null && getClass() == obj.getClass()
-                && doubleToLongBits(this.x) == doubleToLongBits(((Chromosome) obj).x)
-                && doubleToLongBits(this.y) == doubleToLongBits(((Chromosome) obj).y);
+                && doubleToLongBits(this.x) == doubleToLongBits(((PointChromosome) obj).x)
+                && doubleToLongBits(this.y) == doubleToLongBits(((PointChromosome) obj).y);
     }
 
     @Override

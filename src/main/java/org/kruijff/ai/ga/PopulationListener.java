@@ -28,7 +28,7 @@
  */
 package org.kruijff.ai.ga;
 
-public interface PopulationListener<T extends Fitness> {
+public interface PopulationListener<T extends Chromosome> {
 
     public void initialPopulation(Population<T> p);
 

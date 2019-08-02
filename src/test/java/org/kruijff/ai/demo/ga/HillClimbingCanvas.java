@@ -34,18 +34,18 @@ import org.kruijff.canvas.Canvas;
 
 public class HillClimbingCanvas
         extends Canvas
-        implements PopulationListener<Chromosome> {
+        implements PopulationListener<PointChromosome> {
 
     public HillClimbingCanvas(int width, int height) {
         super(width, height);
     }
 
     @Override
-    public void initialPopulation(Population<Chromosome> p) {
+    public void initialPopulation(Population<PointChromosome> p) {
     }
 
     @Override
-    public void startEvolvingPopulation(Population<Chromosome> p) {
+    public void startEvolvingPopulation(Population<PointChromosome> p) {
         drawBackground();
     }
 
@@ -55,7 +55,7 @@ public class HillClimbingCanvas
             for (int y = 0; y < height(); ++y) {
                 double xx = 4d * x / width();
                 double yy = 4d * (height() - y) / height();
-                int f = (int) Chromosome.fitness(xx, yy);
+                int f = (int) PointChromosome.fitness(xx, yy);
                 int c = Canvas.color(f % 256);
                 pixels[x + width() * y] = c;
             }
@@ -66,34 +66,34 @@ public class HillClimbingCanvas
     private static final int MUTATED_COLOR = color(255, 0, 255);
 
     @Override
-    public void selectedChromosome(Chromosome c) {
+    public void selectedChromosome(PointChromosome c) {
         fill(SELECTED_COLOR);
         noStroke();
         drawChromsome(c);
     }
 
     @Override
-    public void crossoverChromosome(Chromosome c) {
+    public void crossoverChromosome(PointChromosome c) {
         fill(CROSSOVER_COLOR);
         noStroke();
         drawChromsome(c);
     }
 
     @Override
-    public void mutatedChromosome(Chromosome c) {
+    public void mutatedChromosome(PointChromosome c) {
         fill(MUTATED_COLOR);
         noStroke();
         drawChromsome(c);
     }
 
-    private void drawChromsome(Chromosome c) {
+    private void drawChromsome(PointChromosome c) {
         int x = (int) (width() * c.x / 4d);
         int y = (int) (height() * (4 - c.y) / 4);
         circle(x, y, 4);
     }
 
     @Override
-    public void endEvolvingPopulation(Population<Chromosome> p) {
+    public void endEvolvingPopulation(Population<PointChromosome> p) {
         repaint();
     }
 }

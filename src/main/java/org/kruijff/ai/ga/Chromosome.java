@@ -28,13 +28,13 @@
  */
 package org.kruijff.ai.ga;
 
-public interface Fitness
-        extends Comparable<Fitness> {
+public interface Chromosome
+        extends Comparable<Chromosome> {
 
     public double fitness();
 
     @Override
-    public default int compareTo(Fitness other) {
+    public default int compareTo(Chromosome other) {
         double a = fitness();
         double b = other.fitness();
         if (a > b)
