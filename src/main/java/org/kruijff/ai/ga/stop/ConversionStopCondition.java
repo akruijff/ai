@@ -28,8 +28,8 @@
  */
 package org.kruijff.ai.ga.stop;
 
-import org.kruijff.ai.ga.Population;
 import org.kruijff.ai.ga.Chromosome;
+import org.kruijff.ai.ga.Population;
 
 /**
  * The algorithm terminates if the population has converged (does not produce

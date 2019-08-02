@@ -30,9 +30,9 @@ package org.kruijff.ai.ga.stop;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.kruijff.ai.ga.Chromosome;
 import org.kruijff.ai.ga.Population;
 import org.kruijff.ai.ga.StopCondition;
-import org.kruijff.ai.ga.Chromosome;
 
 public abstract class AbstractStopCondition<T extends Chromosome>
         implements StopCondition<T> {

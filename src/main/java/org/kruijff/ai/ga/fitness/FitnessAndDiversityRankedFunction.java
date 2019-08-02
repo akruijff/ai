@@ -28,13 +28,7 @@
  */
 package org.kruijff.ai.ga.fitness;
 
-import static java.lang.Double.NEGATIVE_INFINITY;
-import static java.lang.Double.POSITIVE_INFINITY;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiFunction;
 import org.kruijff.ai.ga.Chromosome;
 import org.kruijff.ai.ga.exceptions.SourcePoolEmptyException;

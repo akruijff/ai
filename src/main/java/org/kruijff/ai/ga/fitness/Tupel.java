@@ -30,6 +30,7 @@ package org.kruijff.ai.ga.fitness;
 
 import static java.lang.Math.sqrt;
 import static java.lang.String.format;
+import java.util.Objects;
 import org.kruijff.ai.ga.Chromosome;
 
 class Tupel<T extends Chromosome>

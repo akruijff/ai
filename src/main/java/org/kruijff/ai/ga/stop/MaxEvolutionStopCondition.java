@@ -28,8 +28,8 @@
  */
 package org.kruijff.ai.ga.stop;
 
-import org.kruijff.ai.ga.Population;
 import org.kruijff.ai.ga.Chromosome;
+import org.kruijff.ai.ga.Population;
 
 public class MaxEvolutionStopCondition<T extends Chromosome>
         extends AbstractStopCondition<T> {

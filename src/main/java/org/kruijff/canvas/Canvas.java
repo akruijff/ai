@@ -28,8 +28,6 @@
  */
 package org.kruijff.canvas;
 
-import java.awt.Color;
-
 public class Canvas {
 
     private static final long serialVersionUID = 1L;
