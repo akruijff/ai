@@ -70,6 +70,7 @@ public class PopulationTest {
 
     @Test
     public void crossover() {
+        settings.setPoolSize(8);
         settings.setEliteSize(3);
         settings.setMutationChance(0);
         settings.selectFunc = new SelectNthElementFunction();
@@ -95,6 +96,30 @@ public class PopulationTest {
         assertEquals(settings.poolSize, p2.size());
         for (int i = 0; i < settings.poolSize; ++i)
             assertPopulationContains(p2, new ID(i + 1 + settings.poolSize));
+    }
+
+    @Test
+    public void populationListener() {
+        int e = 3;
+        settings.setEliteSize(e);
+        settings.setMutationChance(1);
+        settings.selectFunc = new SelectNthElementFunction();
+        settings.crossoverFunc = (left, rigth) -> new ID();
+        settings.mutationFunc = (p, id) -> id.setValue(id.getValue() + settings.poolSize);
+        Population<ID> p = new Population<>(settings);
+        TestPopulationListener l = new TestPopulationListener();
+        p.addPopulationListener(l);
+        p.init();
+        p.evolution(stop);
+
+        int size = p.size();
+        assertEquals(1, l.initialCount());
+        assertEquals(1, l.startEvolvingCount());
+        assertEquals(1, l.initialCount());
+        assertEquals(e, l.selectedCount());
+        assertEquals(size - e, l.crossoverCount());
+        assertEquals(size, l.mutationCount());
+        assertEquals(1, l.endEvolvingCount());
     }
 
     /**
