@@ -44,11 +44,11 @@ public class TupelTest {
 
         helper(0, 1, 0, 0, -1);
         helper(0, 1, 0, 1, 0);
-        helper(0, 1, 1, 0, 0);
+        helper(0, 1, 1, 0, -1);
         helper(0, 1, 1, 1, 1);
 
         helper(1, 0, 0, 0, -1);
-        helper(1, 0, 0, 1, 0);
+        helper(1, 0, 0, 1, 1);
         helper(1, 0, 1, 0, 0);
         helper(1, 0, 1, 1, 1);
 
