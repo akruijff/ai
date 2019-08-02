@@ -47,20 +47,44 @@ class Tupel<T extends Chromosome>
 
     @Override
     public String toString() {
-        return format("weigth=%.2f, fitness=%.2f, diversity=%.2f, chromosome=%s", weight(), fitness, diversity, chromosome);
+        return format("weigth=%.2f, fitness=%.2f, diversity=%.2f, chromosome={%s}", weight(), fitness, diversity, chromosome);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + Objects.hashCode(this.chromosome);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj || obj != null && getClass() == obj.getClass()
+                && Objects.equals(this.chromosome, ((Tupel<?>) obj).chromosome);
     }
 
     @Override
     public int compareTo(Tupel<T> other) {
-        if (weight() < other.weight())
-            return 1;
-        if (weight() > other.weight())
+        double d = other.diff(this);
+        return convert(d);
+    }
+
+    private double diff(Tupel<T> other) {
+        double d = weight() - other.weight();
+        if (d == 0)
+            d = diversity - other.diversity;
+        if (d == 0)
+            d = fitness - other.fitness;
+        return d;
+    }
+
+    private int convert(double d) {
+        if (d < 0)
             return -1;
-        if (diversity < other.diversity)
+        else if (d > 0)
             return 1;
-        if (diversity > other.diversity)
-            return -1;
-        return 0;
+        else
+            return 0;
     }
 
     private double weight() {

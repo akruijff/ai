@@ -57,67 +57,10 @@ public class FitnessAndDiversityRankedFunction<T extends Chromosome>
     public T apply(List<T> sourcePool, List<T> nextPool) {
         if (sourcePool.isEmpty())
             throw new SourcePoolEmptyException();
-        List<Tupel<T>> list = new TupelListBuilder(sourcePool, nextPool).createTupelList();
+        List<Tupel<T>> list = new TupelListBuilder<>(sourcePool, nextPool).createTupelList();
+        if (list.isEmpty())
+            return sourcePool.get(0); // The tupel list can be empty when sourcePool contains doubles.
         return new ChromosomeSelector(sourcePool, nextPool, list).select();
-    }
-
-    private class TupelListBuilder {
-
-        private final List<T> sourcePool;
-        private final List<T> nextPool;
-        private final Map<T, Double> fitnessMap;
-        private final Map<T, Double> diversityMap;
-        private final Boundry fitnessBoundry;
-        private final Boundry diversityBoundry;
-
-        private TupelListBuilder(List<T> sourcePool, List<T> nextPool) {
-            this.sourcePool = sourcePool;
-            this.nextPool = nextPool;
-            fitnessMap = createFitnessMap(sourcePool);
-            diversityMap = createDiversityMap(sourcePool);
-            fitnessBoundry = createBoundry(sourcePool, fitnessMap);
-            diversityBoundry = createBoundry(sourcePool, diversityMap);
-        }
-
-        private Map<T, Double> createFitnessMap(List<T> sourcePool) {
-            Map<T, Double> map = new HashMap<>(2 * sourcePool.size());
-            sourcePool.forEach(s -> map.put(s, s.fitness()));
-            return map;
-        }
-
-        private Map<T, Double> createDiversityMap(List<T> sourcePool) {
-            Map<T, Double> map = new HashMap<>(2 * sourcePool.size());
-            sourcePool.forEach(s -> map.put(s, diversity(s)));
-            return map;
-        }
-
-        private Double diversity(T s) {
-            return nextPool.stream().
-                    map(n -> s.partialDiversity(n)).
-                    reduce(0d, (a, b) -> a + b);
-        }
-
-        private Boundry createBoundry(List<T> source, Map<T, Double> map) {
-            double min = POSITIVE_INFINITY, max = NEGATIVE_INFINITY;
-            for (T s : source) {
-                min = Math.min(min, map.get(s));
-                max = Math.max(max, map.get(s));
-            }
-            return new Boundry(min, max);
-        }
-
-        private List<Tupel<T>> createTupelList() {
-            return sourcePool.stream()
-                    .filter(s -> !nextPool.contains(s))
-                    .map(s -> createTupel(s))
-                    .collect(ArrayList::new, List::add, List::addAll);
-        }
-
-        private Tupel<T> createTupel(T s) {
-            double f = fitnessBoundry.normalize(fitnessMap.get(s));
-            double d = diversityBoundry.normalize(diversityMap.get(s));
-            return new Tupel<>(s, f, d);
-        }
     }
 
     private class ChromosomeSelector {
@@ -134,7 +77,6 @@ public class FitnessAndDiversityRankedFunction<T extends Chromosome>
             this.list = list;
             r = randomGenerator.random();
             i = 0;
-            Collections.sort(list);
         }
 
         private T select() {

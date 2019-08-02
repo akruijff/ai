@@ -28,30 +28,58 @@
  */
 package org.kruijff.ai.ga.fitness;
 
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.POSITIVE_INFINITY;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 import static java.lang.String.format;
+import org.kruijff.ai.ga.Chromosome;
+import org.kruijff.ai.ga.ID;
 
-class Boundry {
+public class TestPointChromosome
+        implements Chromosome {
 
-    private final double min;
-    private final double max;
+    private ID id = new ID();
+    private double x;
+    private double y;
+    private double f;
 
-    public Boundry(double min, double max) {
-        this.min = min;
-        this.max = max;
+    public TestPointChromosome(int x, int y) {
+        this(x, y, 0);
+    }
+
+    public TestPointChromosome(int x, int y, int f) {
+        this.x = x;
+        this.y = y;
+        this.f = f;
     }
 
     @Override
     public String toString() {
-        return format("min=%.3f, max=%.3f", min, max);
+        return format("id=%s, x=%.2f, y=%.2f, f=%.2f", id, x, y , f);
     }
 
-    public double normalize(double value) {
-        double n = value - min;
-        double d = max - min;
-        return d == 0 ? n : n / d;
+    @Override
+    public double fitness() {
+        return f;
     }
 
-    double range() {
-        return max - min;
+    @Override
+    public double partialDiversity(Chromosome obj) {
+        if (this == obj)
+            return 0;
+        if (obj == null)
+            return NEGATIVE_INFINITY;
+        if (getClass() != obj.getClass())
+            return POSITIVE_INFINITY;
+        return distance(obj);
+    }
+
+    private double distance(Chromosome obj) {
+        return distance(((TestPointChromosome) obj).x, ((TestPointChromosome) obj).y);
+    }
+
+    private double distance(double ox, double oy) {
+        return sqrt(pow(x - ox, 2) + pow(y - oy, 2));
     }
 }
