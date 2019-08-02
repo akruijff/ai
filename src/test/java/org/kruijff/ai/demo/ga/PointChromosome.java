@@ -28,6 +28,8 @@
  */
 package org.kruijff.ai.demo.ga;
 
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.doubleToLongBits;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
@@ -35,6 +37,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 import static java.lang.Math.random;
 import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 import static java.lang.String.format;
 import org.kruijff.ai.ga.Chromosome;
 
@@ -90,5 +93,24 @@ public class PointChromosome
         double a = 2 * PI * random();
         x += step * sin(a);
         y += step * cos(a);
+    }
+
+    @Override
+    public double partialDiversity(Chromosome obj) {
+        if (this == obj)
+            return 0;
+        if (obj == null)
+            return NEGATIVE_INFINITY;
+        if (getClass() != obj.getClass())
+            return POSITIVE_INFINITY;
+        return distance(obj);
+    }
+
+    private double distance(Chromosome obj) {
+        return distance(((PointChromosome) obj).x, ((PointChromosome) obj).y);
+    }
+
+    private double distance(double ox, double oy) {
+        return sqrt(pow(x - ox, 2) + pow(y - oy, 2));
     }
 }

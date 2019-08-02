@@ -33,6 +33,8 @@ public interface Chromosome
 
     public double fitness();
 
+    public double partialDiversity(Chromosome e);
+
     @Override
     public default int compareTo(Chromosome other) {
         double a = fitness();

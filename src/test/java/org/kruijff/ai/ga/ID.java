@@ -85,4 +85,9 @@ public class ID
     public double fitness() {
         return count - value;
     }
+
+    @Override
+    public double partialDiversity(Chromosome other) {
+        return equals(other) ? 0 : 1;
+    }
 }
