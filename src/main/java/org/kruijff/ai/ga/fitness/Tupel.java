@@ -29,6 +29,7 @@
 package org.kruijff.ai.ga.fitness;
 
 import static java.lang.Math.sqrt;
+import static java.lang.String.format;
 import org.kruijff.ai.ga.Chromosome;
 
 class Tupel<T extends Chromosome>
@@ -36,30 +37,31 @@ class Tupel<T extends Chromosome>
 
     private T chromosome;
     private double fitness;
-    private double divisity;
+    private double diversity;
 
     Tupel(T chromosome, double fitness, double divisity) {
         this.chromosome = chromosome;
         this.fitness = fitness;
-        this.divisity = divisity;
+        this.diversity = divisity;
     }
 
     @Override
     public String toString() {
-        return chromosome.toString() + ", divisity=" + divisity + ", " + x();
+        return format("weigth=%.2f, fitness=%.2f, diversity=%.2f, chromosome=%s", weight(), fitness, diversity, chromosome);
     }
 
     @Override
     public int compareTo(Tupel<T> other) {
-        if (x() < other.x())
+        double d = weight() - other.weight();
+        if (d < 0)
             return 1;
-        if (x() > other.x())
+        if (d > 0)
             return -1;
         return 0;
     }
 
-    private double x() {
-        return sqrt(fitness * fitness + divisity * divisity);
+    private double weight() {
+        return sqrt(fitness * fitness + diversity * diversity);
     }
 
     T chromosome() {

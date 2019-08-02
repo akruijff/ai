@@ -28,6 +28,41 @@
  */
 package org.kruijff.ai.ga.fitness;
 
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.kruijff.ai.ga.Chromosome;
+
 public class TupelTest {
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void compare() {
+        helper(0, 0, 0, 0, 0);
+        helper(0, 0, 0, 1, 1);
+        helper(0, 0, 1, 0, 1);
+        helper(0, 0, 1, 1, 1);
+
+        helper(0, 1, 0, 0, -1);
+        helper(0, 1, 0, 1, 0);
+        helper(0, 1, 1, 0, 0);
+        helper(0, 1, 1, 1, 1);
+
+        helper(1, 0, 0, 0, -1);
+        helper(1, 0, 0, 1, 0);
+        helper(1, 0, 1, 0, 0);
+        helper(1, 0, 1, 1, 1);
+
+        helper(1, 1, 0, 0, -1);
+        helper(1, 1, 0, 1, -1);
+        helper(1, 1, 1, 0, -1);
+        helper(1, 1, 1, 1, 0);
+    }
+
+    private void helper(double x1, double y1, double x2, double y2, double result) {
+        Chromosome c = new ChromosomeDummy();
+        Tupel<Chromosome> xx = new Tupel<>(c, x1, y1);
+        Tupel<Chromosome> yy = new Tupel<>(c, x2, y2);
+        assertEquals(result, xx.compareTo(yy), 0.01);
+    }
 
 }
