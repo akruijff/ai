@@ -55,7 +55,7 @@ public class FitnessAndDiversityRankedFunction<T extends Chromosome>
 
     @Override
     public T apply(List<T> sourcePool, List<T> nextPool) {
-        if (sourcePool.size() == 0)
+        if (sourcePool.isEmpty())
             throw new SourcePoolEmptyException();
         List<Tupel<T>> list = new TupelListBuilder(sourcePool, nextPool).createTupelList();
         return new ChromosomeSelector(sourcePool, nextPool, list).select();
@@ -116,7 +116,7 @@ public class FitnessAndDiversityRankedFunction<T extends Chromosome>
         private Tupel<T> createTupel(T s) {
             double f = fitnessBoundry.normalize(fitnessMap.get(s));
             double d = diversityBoundry.normalize(diversityMap.get(s));
-            return new Tupel(s, f, d);
+            return new Tupel<>(s, f, d);
         }
     }
 
@@ -128,7 +128,7 @@ public class FitnessAndDiversityRankedFunction<T extends Chromosome>
         private double r;
         private int i;
 
-        public ChromosomeSelector(List<T> sourcePool, List<T> nextPool, List<Tupel<T>> list) {
+        private ChromosomeSelector(List<T> sourcePool, List<T> nextPool, List<Tupel<T>> list) {
             this.sourcePool = sourcePool;
             this.nextPool = nextPool;
             this.list = list;
