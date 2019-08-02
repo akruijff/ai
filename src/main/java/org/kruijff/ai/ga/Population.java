@@ -123,16 +123,11 @@ public class Population<T extends Chromosome> {
     }
 
     private void createChild(Population<T> source) {
-        T first = settings.selectFunc.apply(source.pool, new Population<>(settings).pool);
-        T second = selectSecondParent(source, first);
-        T child = settings.crossoverFunc.apply(first, second);
+        T first = settings.selectFunc.apply(source.pool, pool);
+        T second = settings.selectFunc.apply(source.pool, pool);
+        T child = settings.crossoverFunc.apply(first, first);
         pool.add(child);
         listeners.crossoverChromosome(child);
-    }
-
-    private T selectSecondParent(Population<T> source, T first) {
-        T second = settings.selectFunc.apply(source.pool, new Population<>(settings).pool);
-        return second;
     }
 
     private boolean isPoolFull() {

@@ -28,30 +28,30 @@
  */
 package org.kruijff.ai.demo.ga;
 
-import org.kruijff.ai.ga.fitness.SimpleFitnessFunction;
-import static java.lang.Math.pow;
 import static java.lang.Math.random;
-import java.util.List;
-import java.util.function.BiFunction;
 import org.kruijff.ai.ga.Population;
 import org.kruijff.ai.ga.Settings;
+import org.kruijff.ai.ga.fitness.FitnessAndDiversityRankedFunction;
 import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
 
 public class MainGA {
 
-    private static final double STEP_SIZE = 0.1;
+    private static final double STEP_SIZE = .1;
 
     public static void main(String[] args) {
-        HillClimbingCanvas canvas = new HillClimbingCanvas(640, 480);
+        HillClimbingCanvas canvas = new HillClimbingCanvas(1024, 768);
         canvas.drawBackground();
 
         Settings<PointChromosome> settings = new Settings<>();
         // @TODO Test for functions set
         // @TODO Test for functions returns null
         settings.setInitFunction(() -> new PointChromosome(random() / 10, random() / 10));
-        settings.setSelectFunction(new SimpleFitnessFunction());
-        settings.setCrossoverFunction((left, rigth) -> new PointChromosome(left.x, rigth.y));
+        settings.setSelectFunction(new FitnessAndDiversityRankedFunction());
+        settings.setCrossoverFunction((left, rigth) -> random() < .5
+                ? new PointChromosome(left.x, rigth.y)
+                : new PointChromosome(left.y, rigth.x));
         settings.setMutationFunction((p, c) -> c.mutate(STEP_SIZE));
+        settings.setMutationChance(.1);
 
         Population<PointChromosome> p = new Population<>(settings);
         p.addPopulationListener(canvas);
@@ -62,7 +62,4 @@ public class MainGA {
         System.out.println("Best chromosone: " + best.getBest());
         canvas.close();
     }
-
-
-
 }

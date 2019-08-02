@@ -64,7 +64,7 @@ public class PointChromosome
 
     @Override
     public String toString() {
-        return format("Chromosome{x=%.2f, y=%.2f, fitness=%f}", x, y, fitness());
+        return format("x=%.2f, y=%.2f, fitness=%f", x, y, fitness());
     }
 
     @Override

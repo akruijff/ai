@@ -26,58 +26,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai.ga;
+package org.kruijff.ai.ga.fitness;
 
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
+import static java.lang.String.format;
 
-public class Settings<T extends Chromosome> {
+class Boundry {
 
-    int poolSize = 128;
-    int eliteSize = 2;
-    double crossoverChance = 0.01;
-    double mutationChance = 0.01;
-    int evolutionCount = 0;
-    Supplier<T> initFunc;
-    BiFunction<List<T>, List<T>, T> selectFunc;
-    BiFunction<T, T, T> crossoverFunc;
-    BiConsumer<Population<T>, T> mutationFunc;
+    double min;
+    double max;
 
-    public int getEvolutionCount() {
-        return evolutionCount;
+    public Boundry(double min, double max) {
+        this.min = min;
+        this.max = max;
     }
 
-    public void setPoolSize(int size) {
-        poolSize = size;
-        if (eliteSize > size)
-            eliteSize = size;
+    @Override
+    public String toString() {
+        return format("min=%.3f, max=%.3f", min, max);
     }
 
-    public void setEliteSize(int size) {
-        if (poolSize < size)
-            poolSize = size;
-        eliteSize = size;
-    }
-
-    public void setMutationChance(double chance) {
-        mutationChance = chance;
-    }
-
-    public void setInitFunction(Supplier<T> f) {
-        this.initFunc = f;
-    }
-
-    public void setSelectFunction(BiFunction<List<T>, List<T>, T> f) {
-        this.selectFunc = f;
-    }
-
-    public void setCrossoverFunction(BiFunction<T, T, T> f) {
-        this.crossoverFunc = f;
-    }
-
-    public void setMutationFunction(BiConsumer<Population<T>, T> f) {
-        this.mutationFunc = f;
+    public double normalize(double value) {
+        return (value - min) / (max - min) * 1000;
     }
 }
