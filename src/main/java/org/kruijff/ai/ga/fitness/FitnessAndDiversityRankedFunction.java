@@ -41,84 +41,121 @@ import org.kruijff.ai.ga.Chromosome;
 public class FitnessAndDiversityRankedFunction<T extends Chromosome>
         implements BiFunction<List<T>, List<T>, T> {
 
-    protected double r;
+    private final RandomGenerator randomGenerator;
     private final double pc = .1;
-    private int i;
-    private int last;
+
+    public FitnessAndDiversityRankedFunction() {
+        this.randomGenerator = RandomGenerator.newInstance();
+    }
+
+    public FitnessAndDiversityRankedFunction(RandomGenerator randomGenerator) {
+        this.randomGenerator = randomGenerator;
+    }
 
     @Override
-    public T apply(List<T> source, List<T> nextPool) {
-        r = Math.random();
-
-        i = 0;
-        last = source.size() - nextPool.size() - 1;
-        List<Tupel<T>> list = createTupels(source, nextPool);
-        Collections.sort(list);
-
-        Tupel<T> f = null;
-        for (Tupel<T> e : list) {
-            f = e;
-            if (isChromosomeSelected(e))
-                return e.chromosome();
-        }
-        return f.chromosome();
+    public T apply(List<T> sourcePool, List<T> nextPool) {
+        if (sourcePool.size() == 0)
+            throw new SourcePoolEmptyException();
+        List<Tupel<T>> list = new TupelListBuilder(sourcePool, nextPool).createTupelList();
+        return new ChromosomeSelector(sourcePool, nextPool, list).select();
     }
 
-    private List<Tupel<T>> createTupels(List<T> source, List<T> nextPool) {
-        Map<T, Double> fitnessMap = new HashMap<>(2 * source.size());
-        for (T s : source)
-            fitnessMap.put(s, s.fitness());
+    private class TupelListBuilder {
 
-        Map<T, Double> diversityMap = new HashMap<>(2 * source.size());
-        for (T s : source)
-            diversityMap.put(s, nextPool.stream().map(n -> s.partialDiversity(n)).reduce(0d, (a, b) -> a + b));
+        private final List<T> sourcePool;
+        private final List<T> nextPool;
+        private final Map<T, Double> fitnessMap;
+        private final Map<T, Double> diversityMap;
+        private final Boundry fitnessBoundry;
+        private final Boundry diversityBoundry;
 
-        Boundry fitnessBoundry;
-        {
+        private TupelListBuilder(List<T> sourcePool, List<T> nextPool) {
+            this.sourcePool = sourcePool;
+            this.nextPool = nextPool;
+            fitnessMap = createFitnessMap(sourcePool);
+            diversityMap = createDiversityMap(sourcePool);
+            fitnessBoundry = createBoundry(sourcePool, fitnessMap);
+            diversityBoundry = createBoundry(sourcePool, diversityMap);
+        }
+
+        private Map<T, Double> createFitnessMap(List<T> sourcePool) {
+            Map<T, Double> map = new HashMap<>(2 * sourcePool.size());
+            sourcePool.forEach(s -> map.put(s, s.fitness()));
+            return map;
+        }
+
+        private Map<T, Double> createDiversityMap(List<T> sourcePool) {
+            Map<T, Double> map = new HashMap<>(2 * sourcePool.size());
+            sourcePool.forEach(s -> map.put(s, diversity(s)));
+            return map;
+        }
+
+        private Double diversity(T s) {
+            return nextPool.stream().
+                    map(n -> s.partialDiversity(n)).
+                    reduce(0d, (a, b) -> a + b);
+        }
+
+        private Boundry createBoundry(List<T> source, Map<T, Double> map) {
             double min = POSITIVE_INFINITY, max = NEGATIVE_INFINITY;
             for (T s : source) {
-                double v = fitnessMap.get(s);
-                if (v < min)
-                    min = v;
-                if (v > max)
-                    max = v;
+                min = Math.min(min, map.get(s));
+                max = Math.max(max, map.get(s));
             }
-            fitnessBoundry = new Boundry(min, max);
+            return new Boundry(min, max);
         }
 
-        Boundry diversityBoundry;
-        {
-            double min = POSITIVE_INFINITY, max = NEGATIVE_INFINITY;
-            for (T s : source) {
-                double v = diversityMap.get(s);
-                if (v < min)
-                    min = v;
-                if (v > max)
-                    max = v;
-            }
-            diversityBoundry = new Boundry(min, max);
+        private List<Tupel<T>> createTupelList() {
+            return sourcePool.stream()
+                    .filter(s -> !nextPool.contains(s))
+                    .map(s -> createTupel(s))
+                    .collect(ArrayList::new, List::add, List::addAll);
         }
 
-        List<Tupel<T>> list = new ArrayList<>();
-        for (T s : source)
-            if (!nextPool.contains(s)) {
-                double f = fitnessBoundry.normalize(fitnessMap.get(s));
-                double d = diversityBoundry.normalize(diversityMap.get(s));
-                list.add(new Tupel(s, f, d));
-            }
-        return list;
+        private Tupel<T> createTupel(T s) {
+            double f = fitnessBoundry.normalize(fitnessMap.get(s));
+            double d = diversityBoundry.normalize(diversityMap.get(s));
+            return new Tupel(s, f, d);
+        }
     }
 
-    protected boolean isChromosomeSelected(Tupel<T> e) {
-        r -= calculateChanceThisChromosomeIsSelected();
-        return r <= 0;
-    }
+    private class ChromosomeSelector {
 
-    private double calculateChanceThisChromosomeIsSelected() {
-        double c = i == 0 ? pc
-                : i < last ? Math.pow(1 - pc, i) * pc
-                        : Math.pow(1 - pc, i);
-        ++i;
-        return c;
+        private final List<T> sourcePool;
+        private final List<T> nextPool;
+        private final List<Tupel<T>> list;
+        private double r;
+        private int i;
+
+        public ChromosomeSelector(List<T> sourcePool, List<T> nextPool, List<Tupel<T>> list) {
+            this.sourcePool = sourcePool;
+            this.nextPool = nextPool;
+            this.list = list;
+            r = randomGenerator.random();
+            i = 0;
+            Collections.sort(list);
+        }
+
+        private T select() {
+            Tupel<T> f = list.get(list.size() - 1);
+            for (Tupel<T> e : list)
+                if (isChromosomeSelected(e))
+                    return e.chromosome();
+            return f.chromosome();
+        }
+
+        private boolean isChromosomeSelected(Tupel<T> e) {
+            r -= calculateChanceThisChromosomeIsSelected();
+            return r <= 0;
+        }
+
+        private double calculateChanceThisChromosomeIsSelected() {
+            int last = sourcePool.size() - nextPool.size() - 1;
+            double c = i == 0 ? pc
+                    : i < last ? Math.pow(1 - pc, i) * pc
+                            : Math.pow(1 - pc, i);
+            ++i;
+            return c;
+        }
     }
 }

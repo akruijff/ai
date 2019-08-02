@@ -28,46 +28,12 @@
  */
 package org.kruijff.ai.ga.fitness;
 
-import static java.lang.Math.sqrt;
-import static java.lang.String.format;
-import org.kruijff.ai.ga.Chromosome;
+@FunctionalInterface
+public interface RandomGenerator {
 
-class Tupel<T extends Chromosome>
-        implements Comparable<Tupel<T>> {
-
-    private T chromosome;
-    private double fitness;
-    private double diversity;
-
-    Tupel(T chromosome, double fitness, double divisity) {
-        this.chromosome = chromosome;
-        this.fitness = fitness;
-        this.diversity = divisity;
+    public static RandomGenerator newInstance() {
+        return Math::random;
     }
 
-    @Override
-    public String toString() {
-        return format("weigth=%.2f, fitness=%.2f, diversity=%.2f, chromosome=%s", weight(), fitness, diversity, chromosome);
-    }
-
-    @Override
-    public int compareTo(Tupel<T> other) {
-        if (weight() < other.weight())
-            return 1;
-        if (weight() > other.weight())
-            return -1;
-        if (diversity < other.diversity)
-            return 1;
-        if (diversity > other.diversity)
-            return -1;
-        return 0;
-    }
-
-    private double weight() {
-        return sqrt(fitness * fitness + diversity * diversity);
-    }
-
-    T chromosome() {
-        return chromosome;
-    }
+    public double random();
 }

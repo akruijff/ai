@@ -28,18 +28,58 @@
  */
 package org.kruijff.ai.ga.fitness;
 
+import static java.lang.Double.doubleToLongBits;
+import static java.lang.String.format;
 import org.kruijff.ai.ga.Chromosome;
+import org.kruijff.ai.ga.ID;
 
-public class ChromosomeDummy
+public class ChromosomeStub
         implements Chromosome {
+
+    private ID id = new ID();
+    private double fitness;
+    private double partialDiversity;
+
+    public ChromosomeStub() {
+        this(0, 0);
+    }
+
+    public ChromosomeStub(double fitness, double partialDiversity) {
+        this.fitness = fitness;
+        this.partialDiversity = partialDiversity;
+    }
+
+    @Override
+    public String toString() {
+        return format("{id=%s, fitness=%.2f, partialDiversity=%.2f}", id, fitness, partialDiversity);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (int) (doubleToLongBits(this.fitness) ^ (doubleToLongBits(this.fitness) >>> 32));
+        hash = 53 * hash + (int) (doubleToLongBits(this.partialDiversity) ^ (doubleToLongBits(this.partialDiversity) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        return this == obj || obj != null && getClass() == obj.getClass()
+                && doubleToLongBits(this.fitness) == doubleToLongBits(((ChromosomeStub) obj).fitness)
+                && doubleToLongBits(this.partialDiversity) == doubleToLongBits(((ChromosomeStub) obj).partialDiversity);
+    }
 
     @Override
     public double fitness() {
-        return 0;
+        return fitness;
     }
 
     @Override
     public double partialDiversity(Chromosome e) {
-        return 0;
+        if (this == e)
+            return 0;
+        return partialDiversity;
     }
 }

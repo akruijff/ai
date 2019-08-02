@@ -59,7 +59,7 @@ public class TupelTest {
     }
 
     private void helper(double x1, double y1, double x2, double y2, double result) {
-        Chromosome c = new ChromosomeDummy();
+        Chromosome c = new ChromosomeStub();
         Tupel<Chromosome> xx = new Tupel<>(c, x1, y1);
         Tupel<Chromosome> yy = new Tupel<>(c, x2, y2);
         assertEquals(result, xx.compareTo(yy), 0.01);
