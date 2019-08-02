@@ -36,6 +36,7 @@ import static org.junit.Assert.assertNotEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.kruijff.ai.ga.Chromosome;
+import org.kruijff.ai.ga.exceptions.SourcePoolEmptyException;
 
 public class FitnessAndDiversityRankedFunctionTest {
 

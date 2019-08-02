@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import org.kruijff.ai.ga.Chromosome;
+import org.kruijff.ai.ga.exceptions.SourcePoolEmptyException;
 
 public class FitnessAndDiversityRankedFunction<T extends Chromosome>
         implements BiFunction<List<T>, List<T>, T> {
