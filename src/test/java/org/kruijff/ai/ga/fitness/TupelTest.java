@@ -28,24 +28,6 @@
  */
 package org.kruijff.ai.ga.fitness;
 
-import static java.lang.String.format;
+public class TupelTest {
 
-class Boundry {
-
-    private double min;
-    private double max;
-
-    public Boundry(double min, double max) {
-        this.min = min;
-        this.max = max;
-    }
-
-    @Override
-    public String toString() {
-        return format("min=%.3f, max=%.3f", min, max);
-    }
-
-    public double normalize(double value) {
-        return (value - min) / (max - min);
-    }
 }
