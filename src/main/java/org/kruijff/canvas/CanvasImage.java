@@ -67,16 +67,12 @@ public class CanvasImage
 
     void updatePixels(int[] pixels) {
         img.setRGB(0, 0, width, height, pixels, 0, width);
-        invalidate();
-        repaint();
     }
 
     void background(int c) {
         int[] pixels = new int[width * height];
         Arrays.fill(pixels, c);
         img.setRGB(0, 0, width, height, pixels, 0, width);
-        invalidate();
-        repaint();
     }
 
     void noFill() {

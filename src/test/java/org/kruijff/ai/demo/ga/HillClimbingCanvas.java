@@ -36,6 +36,13 @@ public class HillClimbingCanvas
         extends Canvas
         implements PopulationListener<PointChromosome> {
 
+    private static final int W = 4;
+    private static final int H = 4;
+    private static final int R = 8;
+    private static final int SELECTED_COLOR = color(255, 0, 0);
+    private static final int CROSSOVER_COLOR = color(0, 0, 255);
+    private static final int MUTATED_COLOR = color(255, 0, 255);
+
     public HillClimbingCanvas(int width, int height) {
         super(width, height);
     }
@@ -61,9 +68,6 @@ public class HillClimbingCanvas
             }
         updatePixels(pixels);
     }
-    private static final int SELECTED_COLOR = color(255, 255, 0);
-    private static final int CROSSOVER_COLOR = color(0, 0, 255);
-    private static final int MUTATED_COLOR = color(255, 0, 255);
 
     @Override
     public void selectedChromosome(PointChromosome c) {
@@ -87,9 +91,9 @@ public class HillClimbingCanvas
     }
 
     private void drawChromsome(PointChromosome c) {
-        int x = (int) (width() * c.x / 4d);
-        int y = (int) (height() * (4 - c.y) / 4);
-        circle(x, y, 4);
+        int x = (int) (width() * c.x / W);
+        int y = (int) (height() * (H - c.y) / H);
+        circle(x, y, R);
     }
 
     @Override
