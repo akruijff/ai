@@ -61,7 +61,7 @@ public abstract class AbstractStopCondition<T extends Chromosome>
 
     public final Population<T> get(int index) {
         if (index < 0)
-            index = list.size() - index;
+            index = list.size() + index;
         return list.get(index);
     }
 
