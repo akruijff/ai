@@ -49,13 +49,18 @@ public class SelectionFunction<T extends Chromosome>
     @Override
     public T apply(List<T> source, List<T> nextPool) {
         double r = random();
+        T last = null;
         Map<T, Double> map = util.rankedDistance(source, nextPool, pc);
-        for (int i = 0; i < 2; ++i) // We migth have missed a applicatle chromosome earlier
-            for (Entry<T, Double> e : map.entrySet()) {
+        for (Entry<T, Double> e : map.entrySet())
+            if (!nextPool.contains(e.getKey())) {
                 r -= e.getValue();
-                if (r < 0 && !nextPool.contains(e.getKey()))
+                if (r < 0)
                     return e.getKey();
+                else
+                    last = e.getKey();
             }
+        if (last != null)
+            return last;
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
