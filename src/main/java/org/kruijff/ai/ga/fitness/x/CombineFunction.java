@@ -26,46 +26,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai.ga.fitness;
+package org.kruijff.ai.ga.fitness.x;
 
+import static java.lang.Math.random;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.BiFunction;
 import org.kruijff.ai.ga.Chromosome;
 
-public class FitnessRankedFunction<T extends Chromosome>
-        extends AbstractFitnessFunction<T> {
+// https://cs.stackexchange.com/questions/69902/measuring-and-maintaining-the-diversity-of-individuals-in-genetic-algorithm
+public class CombineFunction<T extends Chromosome>
+        implements BiFunction<List<T>, List<T>, T> {
 
     private final double pc;
-    private final RandomGenerator randomGenerator;
-    private int i;
-    private int last;
+    private final ChanceUtil<T> util = new ChanceUtil<>();
 
-
-    public FitnessRankedFunction(double pc) {
-        this(pc, RandomGenerator.newInstance());
-    }
-
-    public FitnessRankedFunction(double pc, RandomGenerator randomGenerator) {
+    public CombineFunction(double pc) {
         this.pc = pc;
-        this.randomGenerator = randomGenerator;
     }
 
     @Override
-    protected void doBefore(List<T> source, List<T> nextPool) {
-        i = 0;
-        last = source.size() - nextPool.size() - 1;
-    }
-
-    @Override
-    protected boolean isChromosomeSelected(T e) {
-        r -= calculateChanceThisChromosomeIsSelected();
-        return r <= 0;
-    }
-
-    private double calculateChanceThisChromosomeIsSelected() {
-        double c = i == 0 ? pc
-                : i < last ? Math.pow(1 - pc, i) * pc
-                        : Math.pow(1 - pc, i);
-        ++i;
-        return c;
+    public T apply(List<T> source, List<T> nextPool) {
+        double r = random();
+        Map<T, Double> map = util.rankedDistance(source, nextPool, pc);
+        for (int i = 0; i < 2; ++i) // We migth have missed a applicatle chromosome earlier
+            for (Entry<T, Double> e : map.entrySet()) {
+                r -= e.getValue();
+                if (r < 0 && !nextPool.contains(e.getKey()))
+                    return e.getKey();
+            }
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

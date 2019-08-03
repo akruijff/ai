@@ -122,8 +122,13 @@ public class Population<T extends Chromosome> {
     private void selection(Population<T> source) {
         while (!isPoolFull()) {
             T e = settings.selectFunc.apply(source.pool, pool);
-            pool.add(e);
-            listeners.selectedChromosome(e);
+            if (!pool.contains(e)) {
+                pool.add(e);
+                listeners.selectedChromosome(e);
+            } else {
+                int index = pool.indexOf(e);
+                System.out.println();
+            }
         }
     }
 
@@ -146,6 +151,8 @@ public class Population<T extends Chromosome> {
     private void crossover(Population<T> source) {
         for (int i = 0; i < settings.crossoverNumber(); ++i) {
             T e = createChild(source);
+            if (shouldMutate())
+                settings.mutationFunc.accept(this, e);
             pool.add(e);
             listeners.crossoverChromosome(e);
         }

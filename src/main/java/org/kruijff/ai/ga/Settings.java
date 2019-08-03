@@ -39,7 +39,7 @@ public class Settings<T extends Chromosome> {
     int poolSize = 128;
     int eliteSize = 2;
     double mutationChance = 0.01;
-    double crossoverPercentage = 0.25;
+    double crossoverPercentage = 0.05;
     int evolutionCount = 0;
     Supplier<T> initFunc;
     BiFunction<List<T>, List<T>, T> selectFunc;

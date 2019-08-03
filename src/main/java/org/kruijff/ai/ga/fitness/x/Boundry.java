@@ -26,11 +26,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai.ga.fitness;
+package org.kruijff.ai.ga.fitness.x;
 
 import static java.lang.String.format;
 
-class Boundry {
+public class Boundry {
 
     private final double min;
     private final double max;
@@ -51,7 +51,7 @@ class Boundry {
         return d == 0 ? n : n / d;
     }
 
-    double range() {
+    public double range() {
         return max - min;
     }
 }

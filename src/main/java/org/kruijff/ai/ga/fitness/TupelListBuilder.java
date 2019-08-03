@@ -28,6 +28,7 @@
  */
 package org.kruijff.ai.ga.fitness;
 
+import org.kruijff.ai.ga.fitness.x.Boundry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
