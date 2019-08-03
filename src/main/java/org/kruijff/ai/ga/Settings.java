@@ -28,6 +28,7 @@
  */
 package org.kruijff.ai.ga;
 
+import static java.lang.Math.ceil;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -37,8 +38,8 @@ public class Settings<T extends Chromosome> {
 
     int poolSize = 128;
     int eliteSize = 2;
-    double crossoverChance = 0.01;
     double mutationChance = 0.01;
+    double crossoverPercentage = 0.25;
     int evolutionCount = 0;
     Supplier<T> initFunc;
     BiFunction<List<T>, List<T>, T> selectFunc;
@@ -63,6 +64,14 @@ public class Settings<T extends Chromosome> {
 
     public void setMutationChance(double chance) {
         mutationChance = chance;
+    }
+
+    public void setCrossoverPercentage(double percentage) {
+        crossoverPercentage = percentage;
+    }
+
+    int crossoverNumber() {
+        return (int) ceil(poolSize * crossoverPercentage);
     }
 
     public void setInitFunction(Supplier<T> f) {

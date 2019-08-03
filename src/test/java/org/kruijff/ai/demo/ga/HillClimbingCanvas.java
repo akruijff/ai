@@ -39,9 +39,10 @@ public class HillClimbingCanvas
     private static final int W = 4;
     private static final int H = 4;
     private static final int R = 8;
-    private static final int SELECTED_COLOR = color(255, 0, 0);
-    private static final int CROSSOVER_COLOR = color(0, 0, 255);
+    private static final int ELITE_SELECTED_COLOR = color(255, 0,0);
+    private static final int SELECTED_COLOR = color(0, 255, 0);
     private static final int MUTATED_COLOR = color(255, 0, 255);
+    private static final int CROSSOVER_COLOR = color(0, 0, 255);
 
     public HillClimbingCanvas(int width, int height) {
         super(width, height);
@@ -70,6 +71,13 @@ public class HillClimbingCanvas
     }
 
     @Override
+    public void eliteSelectedChromosome(PointChromosome c) {
+        fill(ELITE_SELECTED_COLOR);
+        noStroke();
+        drawChromsome(c);
+    }
+
+    @Override
     public void selectedChromosome(PointChromosome c) {
         fill(SELECTED_COLOR);
         noStroke();
@@ -77,15 +85,15 @@ public class HillClimbingCanvas
     }
 
     @Override
-    public void crossoverChromosome(PointChromosome c) {
-        fill(CROSSOVER_COLOR);
+    public void mutatedChromosome(PointChromosome c) {
+        fill(MUTATED_COLOR);
         noStroke();
         drawChromsome(c);
     }
 
     @Override
-    public void mutatedChromosome(PointChromosome c) {
-        fill(MUTATED_COLOR);
+    public void crossoverChromosome(PointChromosome c) {
+        fill(CROSSOVER_COLOR);
         noStroke();
         drawChromsome(c);
     }

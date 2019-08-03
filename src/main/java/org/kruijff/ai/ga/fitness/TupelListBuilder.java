@@ -91,8 +91,8 @@ class TupelListBuilder<T extends Chromosome> {
     }
 
     private Tupel<T> createTupel(T s) {
-        double f = fitnessBoundry.range() == 0 ? 0 : 1 - fitnessBoundry.normalize(fitnessMap.get(s));
-        double d = diversityBoundry.range() == 0 ? 0 : 1 - diversityBoundry.normalize(diversityMap.get(s));
+        double f = 1 - fitnessBoundry.normalize(fitnessMap.get(s));
+        double d = 1 - diversityBoundry.normalize(diversityMap.get(s));;
         return new Tupel<>(s, f, d);
     }
 }

@@ -34,11 +34,13 @@ public interface PopulationListener<T extends Chromosome> {
 
     public void startEvolvingPopulation(Population<T> p);
 
+    public void eliteSelectedChromosome(T c);
+
     public void selectedChromosome(T c);
 
-    public void crossoverChromosome(T c);
-
     public void mutatedChromosome(T c);
+
+    public void crossoverChromosome(T c);
 
     public void endEvolvingPopulation(Population<T> p);
 }

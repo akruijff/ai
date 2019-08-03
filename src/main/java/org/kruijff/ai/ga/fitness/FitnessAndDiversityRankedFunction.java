@@ -36,14 +36,15 @@ import org.kruijff.ai.ga.exceptions.SourcePoolEmptyException;
 public class FitnessAndDiversityRankedFunction<T extends Chromosome>
         implements BiFunction<List<T>, List<T>, T> {
 
+    private final double pc;
     private final RandomGenerator randomGenerator;
-    private final double pc = .1;
 
-    public FitnessAndDiversityRankedFunction() {
-        this.randomGenerator = RandomGenerator.newInstance();
+    public FitnessAndDiversityRankedFunction(double pc) {
+        this(pc, RandomGenerator.newInstance());
     }
 
-    public FitnessAndDiversityRankedFunction(RandomGenerator randomGenerator) {
+    public FitnessAndDiversityRankedFunction(double pc, RandomGenerator randomGenerator) {
+        this.pc = pc;
         this.randomGenerator = randomGenerator;
     }
 

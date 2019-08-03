@@ -94,9 +94,11 @@ public class Population<T extends Chromosome> {
 
         Population<T> current = new Population<>(settings);
         current.listeners = listeners;
+
         current.elitistSelection(this);
-        current.crossover(this);
+        current.selection(this);
         current.mutation();
+        current.crossover(this);
         current.sort();
 
         ++settings.evolutionCount;
@@ -108,7 +110,7 @@ public class Population<T extends Chromosome> {
         for (T e : source.getElements())
             if (!isElitePoolFull()) {
                 pool.add(e);
-                listeners.selectedChromosome(e);
+                listeners.eliteSelectedChromosome(e);
             } else
                 return;
     }
@@ -117,25 +119,16 @@ public class Population<T extends Chromosome> {
         return pool.size() >= settings.eliteSize;
     }
 
-    private void crossover(Population<T> source) {
-        while (!isPoolFull())
-            createChild(source);
-    }
-
-    private void createChild(Population<T> source) {
-        T first = settings.selectFunc.apply(source.pool, pool);
-        T second = settings.selectFunc.apply(source.pool, pool);
-        T child = settings.crossoverFunc.apply(first, first);
-        pool.add(child);
-        listeners.crossoverChromosome(child);
+    private void selection(Population<T> source) {
+        while (!isPoolFull()) {
+            T e = settings.selectFunc.apply(source.pool, pool);
+            pool.add(e);
+            listeners.selectedChromosome(e);
+        }
     }
 
     private boolean isPoolFull() {
         return pool.size() >= settings.poolSize;
-    }
-
-    private void sort() {
-        Collections.sort(pool);
     }
 
     private void mutation() {
@@ -148,6 +141,29 @@ public class Population<T extends Chromosome> {
 
     private boolean shouldMutate() {
         return random() < settings.mutationChance;
+    }
+
+    private void crossover(Population<T> source) {
+        for (int i = 0; i < settings.crossoverNumber(); ++i) {
+            T e = createChild(source);
+            pool.add(e);
+            listeners.crossoverChromosome(e);
+        }
+    }
+
+    private T createChild(Population<T> source) {
+        T first = selectRandom(source);
+        T second = selectRandom(source);
+        return settings.crossoverFunc.apply(first, second);
+    }
+
+    private T selectRandom(Population<T> source) {
+        int index = (int) (random() * source.size());
+        return source.pool.get(index);
+    }
+
+    private void sort() {
+        Collections.sort(pool);
     }
 
     public int size() {
@@ -217,9 +233,9 @@ public class Population<T extends Chromosome> {
         }
 
         @Override
-        public void endEvolvingPopulation(Population<T> p) {
+        public void eliteSelectedChromosome(T c) {
             for (PopulationListener<T> l : list)
-                l.endEvolvingPopulation(p);
+                l.eliteSelectedChromosome(c);
         }
 
         @Override
@@ -229,15 +245,21 @@ public class Population<T extends Chromosome> {
         }
 
         @Override
+        public void mutatedChromosome(T c) {
+            for (PopulationListener<T> l : list)
+                l.mutatedChromosome(c);
+        }
+
+        @Override
         public void crossoverChromosome(T c) {
             for (PopulationListener<T> l : list)
                 l.crossoverChromosome(c);
         }
 
         @Override
-        public void mutatedChromosome(T c) {
+        public void endEvolvingPopulation(Population<T> p) {
             for (PopulationListener<T> l : list)
-                l.mutatedChromosome(c);
+                l.endEvolvingPopulation(p);
         }
     }
 }

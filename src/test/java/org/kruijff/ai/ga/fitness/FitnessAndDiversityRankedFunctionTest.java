@@ -48,7 +48,7 @@ public class FitnessAndDiversityRankedFunctionTest {
     public void setup() {
         sourcePool = new ArrayList<>();
         nextPool = new ArrayList<>();
-        func = new FitnessAndDiversityRankedFunction<>(() -> 0);
+        func = new FitnessAndDiversityRankedFunction<>(.05, () -> 0);
     }
 
     @After

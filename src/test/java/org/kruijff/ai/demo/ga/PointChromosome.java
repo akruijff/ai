@@ -53,8 +53,10 @@ public class PointChromosome
 
     public static double fitness(double x, double y) {
         if (x < 0 || x > 4 || y < 0 || y > 4)
-            return 0;
-        return C * pow(sin(W * x), 2) * pow(sin(W * y), 2) * exp((x + y) / O);
+            return NEGATIVE_INFINITY;
+        else if (x > 3 && y > 3 || x < 1 || y < 1)
+            return C * pow(sin(W * x), 2) * pow(sin(W * y), 2) * exp((x + y) / O);
+        return NEGATIVE_INFINITY;
     }
 
     public PointChromosome(double x, double y) {

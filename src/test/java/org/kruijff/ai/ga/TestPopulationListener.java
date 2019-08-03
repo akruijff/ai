@@ -33,9 +33,10 @@ public class TestPopulationListener
 
     private int initial;
     private int startEvolving;
+    private int eliteSelected;
     private int selected;
-    private int crossover;
     private int mutation;
+    private int crossover;
     private int endEvolving;
 
     @Override
@@ -49,18 +50,23 @@ public class TestPopulationListener
     }
 
     @Override
+    public void eliteSelectedChromosome(ID c) {
+        ++eliteSelected;
+    }
+
+    @Override
     public void selectedChromosome(ID c) {
         ++selected;
     }
 
     @Override
-    public void crossoverChromosome(ID c) {
-        ++crossover;
+    public void mutatedChromosome(ID c) {
+        ++mutation;
     }
 
     @Override
-    public void mutatedChromosome(ID c) {
-        ++mutation;
+    public void crossoverChromosome(ID c) {
+        ++crossover;
     }
 
     @Override
@@ -74,6 +80,10 @@ public class TestPopulationListener
 
     public int startEvolvingCount() {
         return startEvolving;
+    }
+
+    public int eliteSelectedCount() {
+        return eliteSelected;
     }
 
     public int selectedCount() {
@@ -91,5 +101,4 @@ public class TestPopulationListener
     public int endEvolvingCount() {
         return endEvolving;
     }
-
 }

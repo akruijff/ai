@@ -28,6 +28,9 @@
  */
 package org.kruijff.ai.ga.fitness;
 
+import com.sun.xml.internal.org.jvnet.fastinfoset.FastInfosetSerializer;
+import static java.lang.Double.MIN_VALUE;
+import static java.lang.Double.NaN;
 import static java.lang.Math.sqrt;
 import static java.lang.String.format;
 import java.util.Objects;
@@ -36,14 +39,14 @@ import org.kruijff.ai.ga.Chromosome;
 class Tupel<T extends Chromosome>
         implements Comparable<Tupel<T>> {
 
-    private T chromosome;
-    private double fitness;
-    private double diversity;
+    private final T chromosome;
+    private final double fitness;
+    private final double diversity;
 
-    Tupel(T chromosome, double fitness, double divisity) {
+    Tupel(T chromosome, double fitness, double diversity) {
         this.chromosome = chromosome;
-        this.fitness = fitness;
-        this.diversity = divisity;
+        this.fitness = fitness != fitness ? 0 : fitness;
+        this.diversity = diversity != diversity ? 0 : diversity;
     }
 
     @Override
