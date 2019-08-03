@@ -28,7 +28,6 @@
  */
 package org.kruijff.ai.ga.fitness;
 
-import org.kruijff.ai.ga.fitness.x.Boundry;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 

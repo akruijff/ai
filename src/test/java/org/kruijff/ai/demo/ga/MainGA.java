@@ -31,7 +31,7 @@ package org.kruijff.ai.demo.ga;
 import static java.lang.Math.random;
 import org.kruijff.ai.ga.Population;
 import org.kruijff.ai.ga.Settings;
-import org.kruijff.ai.ga.fitness.x.CombineFunction;
+import org.kruijff.ai.ga.fitness.SelectionFunction;
 import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
 
 public class MainGA {
@@ -51,7 +51,7 @@ public class MainGA {
         // @TODO Test for functions set
         // @TODO Test for functions returns null
         settings.setInitFunction(() -> new PointChromosome(.1 + random() / 10, .1 + random() / 10));
-        settings.setSelectFunction(new CombineFunction(PC));
+        settings.setSelectFunction(new SelectionFunction(PC));
         settings.setCrossoverFunction((left, rigth) -> random() < .5
                 ? new PointChromosome(left.x, rigth.y)
                 : new PointChromosome(left.y, rigth.x));

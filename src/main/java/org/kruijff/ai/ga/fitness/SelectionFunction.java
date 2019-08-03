@@ -26,32 +26,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.ai.ga.fitness.x;
+package org.kruijff.ai.ga.fitness;
 
-import static java.lang.String.format;
+import static java.lang.Math.random;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.BiFunction;
+import org.kruijff.ai.ga.Chromosome;
 
-public class Boundry {
+// https://cs.stackexchange.com/questions/69902/measuring-and-maintaining-the-diversity-of-individuals-in-genetic-algorithm
+public class SelectionFunction<T extends Chromosome>
+        implements BiFunction<List<T>, List<T>, T> {
 
-    private final double min;
-    private final double max;
+    private final double pc;
+    private final ChanceUtil<T> util = new ChanceUtil<>();
 
-    public Boundry(double min, double max) {
-        this.min = min;
-        this.max = max;
+    public SelectionFunction(double pc) {
+        this.pc = pc;
     }
 
     @Override
-    public String toString() {
-        return format("min=%.3f, max=%.3f", min, max);
-    }
-
-    public double normalize(double value) {
-        double n = value - min;
-        double d = max - min;
-        return d == 0 ? n : n / d;
-    }
-
-    public double range() {
-        return max - min;
+    public T apply(List<T> source, List<T> nextPool) {
+        double r = random();
+        Map<T, Double> map = util.rankedDistance(source, nextPool, pc);
+        for (int i = 0; i < 2; ++i) // We migth have missed a applicatle chromosome earlier
+            for (Entry<T, Double> e : map.entrySet()) {
+                r -= e.getValue();
+                if (r < 0 && !nextPool.contains(e.getKey()))
+                    return e.getKey();
+            }
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

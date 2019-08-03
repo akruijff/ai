@@ -28,44 +28,30 @@
  */
 package org.kruijff.ai.ga.fitness;
 
-import java.util.List;
-import org.kruijff.ai.ga.Chromosome;
+import static java.lang.String.format;
 
-public class FitnessRankedFunction<T extends Chromosome>
-        extends AbstractFitnessFunction<T> {
+public class Boundry {
 
-    private final double pc;
-    private final RandomGenerator randomGenerator;
-    private int i;
-    private int last;
+    private final double min;
+    private final double max;
 
-
-    public FitnessRankedFunction(double pc) {
-        this(pc, RandomGenerator.newInstance());
-    }
-
-    public FitnessRankedFunction(double pc, RandomGenerator randomGenerator) {
-        this.pc = pc;
-        this.randomGenerator = randomGenerator;
+    public Boundry(double min, double max) {
+        this.min = min;
+        this.max = max;
     }
 
     @Override
-    protected void doBefore(List<T> source, List<T> nextPool) {
-        i = 0;
-        last = source.size() - nextPool.size() - 1;
+    public String toString() {
+        return format("min=%.3f, max=%.3f", min, max);
     }
 
-    @Override
-    protected boolean isChromosomeSelected(T e) {
-        r -= calculateChanceThisChromosomeIsSelected();
-        return r <= 0;
+    public double normalize(double value) {
+        double n = value - min;
+        double d = max - min;
+        return d == 0 ? n : n / d;
     }
 
-    private double calculateChanceThisChromosomeIsSelected() {
-        double c = i == 0 ? pc
-                : i < last ? Math.pow(1 - pc, i) * pc
-                        : Math.pow(1 - pc, i);
-        ++i;
-        return c;
+    public double range() {
+        return max - min;
     }
 }
