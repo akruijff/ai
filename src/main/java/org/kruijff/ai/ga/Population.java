@@ -108,19 +108,19 @@ public class Population<T extends Chromosome> {
 
     private void elitistSelection(Population<T> source) {
         for (T e : source.getElements())
-            if (!isElitePoolFull()) {
+            if (!isEliteSelectionDone()) {
                 pool.add(e);
                 listeners.eliteSelectedChromosome(e);
             } else
                 return;
     }
 
-    private boolean isElitePoolFull() {
+    private boolean isEliteSelectionDone() {
         return pool.size() >= settings.eliteSize;
     }
 
     private void selection(Population<T> source) {
-        while (!isPoolFull()) {
+        while (!isSelectionDone()) {
             T e = settings.selectFunc.apply(source.pool, pool);
             if (!pool.contains(e)) {
                 pool.add(e);
@@ -132,16 +132,22 @@ public class Population<T extends Chromosome> {
         }
     }
 
-    private boolean isPoolFull() {
-        return pool.size() >= settings.poolSize;
+    private boolean isSelectionDone() {
+        return pool.size() >= settings.selectionNumber();
     }
 
     private void mutation() {
+        List<T> removals = new ArrayList<>();
+        List<T> mutations = new ArrayList<>();
         for (T e : pool)
             if (shouldMutate()) {
-                settings.mutationFunc.accept(this, e);
+                T mutation = settings.mutationFunc.apply(this, e);
+                removals.add(e);
+                mutations.add(mutation);
                 listeners.mutatedChromosome(e);
             }
+        pool.removeAll(removals);
+        pool.addAll(mutations);
     }
 
     private boolean shouldMutate() {
@@ -151,8 +157,6 @@ public class Population<T extends Chromosome> {
     private void crossover(Population<T> source) {
         for (int i = 0; i < settings.crossoverNumber(); ++i) {
             T e = createChild(source);
-            if (shouldMutate())
-                settings.mutationFunc.accept(this, e);
             pool.add(e);
             listeners.crossoverChromosome(e);
         }

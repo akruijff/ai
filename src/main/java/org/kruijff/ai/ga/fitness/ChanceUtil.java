@@ -39,10 +39,16 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.kruijff.ai.ga.Chromosome;
 
 public class ChanceUtil<T extends Chromosome> {
+
+    public BiFunction<List<T>, List<T>, Map<T, Double>> combineMaps(BiFunction<List<T>, List<T>, Map<T, Double>> func1, BiFunction<List<T>, List<T>, Map<T, Double>> func2, BiFunction<Double, Double, Double> sum) {
+        return new MapCombiner<>(func1, func2, sum);
+    }
 
     public Map<T, Double> rouletteFitness(List<T> source) {
         Map<T, Double> mapFitness = mapFitness(source);
@@ -54,7 +60,7 @@ public class ChanceUtil<T extends Chromosome> {
 
     public Map<T, Double> rankedFitness(List<T> source, double pc) {
         Map<T, Double> mapFitness = mapFitness(source);
-        sort(source, (l, r) -> (int) (mapFitness.get(r) - mapFitness.get(l)));
+        sort(source, mapComperator(mapFitness));
         return collectMap(source, new RankedFunction(source, pc));
     }
 
@@ -96,7 +102,7 @@ public class ChanceUtil<T extends Chromosome> {
     public Map<T, Double> rankedFitnessDistance(List<T> source, List<T> next, double pc) {
         Map<T, Double> mapFitness = mapFitness(source);
         Map<T, Double> mapFitnessDistance = mapFitnessDistance(source, next, mapFitness);
-        sort(source, (l, r) -> (int) (mapFitnessDistance.get(r) - mapFitnessDistance.get(l)));
+        sort(source, mapComperator(mapFitnessDistance));
         return collectMap(source, new RankedFunction(source, pc));
     }
 
@@ -158,6 +164,41 @@ public class ChanceUtil<T extends Chromosome> {
         public Double apply(T e) {
             ++i;
             return i < last ? pow(1 - pc, i) * pc : pow(1 - pc, i);
+        }
+    }
+
+    private static class MapCombiner<T extends Chromosome>
+            implements BiFunction<List<T>, List<T>, Map<T, Double>> {
+
+        private final BiFunction<List<T>, List<T>, Map<T, Double>> func1;
+        private final BiFunction<List<T>, List<T>, Map<T, Double>> func2;
+        private final BiFunction<Double, Double, Double> sum;
+
+        private MapCombiner(BiFunction<List<T>, List<T>, Map<T, Double>> func1, BiFunction<List<T>, List<T>, Map<T, Double>> func2, BiFunction<Double, Double, Double> sum) {
+            this.func1 = func1;
+            this.func2 = func2;
+            this.sum = sum;
+        }
+
+        @Override
+        public Map<T, Double> apply(List<T> source, List<T> next) {
+            Map<T, Double> m1 = func1.apply(source, next);
+            Map<T, Double> m2 = func2.apply(source, next);
+            Map<T, Double> map = new HashMap<>();
+            for (Entry<T, Double> e : m1.entrySet()) {
+                T key = e.getKey();
+                final Double v1 = e.getValue();
+                final double v2 = m2.containsKey(key) ? m2.get(key) : 0;
+                final Double s = sum.apply(v1, v2);
+                map.put(key, s);
+            }
+            for (Entry<T, Double> e : m2.entrySet()) {
+                T key = e.getKey();
+                if (!m1.containsKey(key))
+                    map.put(key, sum.apply(0d, e.getValue()));
+
+            }
+            return map;
         }
     }
 }

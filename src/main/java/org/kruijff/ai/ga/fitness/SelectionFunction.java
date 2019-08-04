@@ -35,22 +35,21 @@ import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import org.kruijff.ai.ga.Chromosome;
 
-// https://cs.stackexchange.com/questions/69902/measuring-and-maintaining-the-diversity-of-individuals-in-genetic-algorithm
 public class SelectionFunction<T extends Chromosome>
         implements BiFunction<List<T>, List<T>, T> {
 
-    private final double pc;
     private final ChanceUtil<T> util = new ChanceUtil<>();
+    private final BiFunction<List<T>, List<T>, Map<T, Double>> mapFunction;
 
-    public SelectionFunction(double pc) {
-        this.pc = pc;
+    public SelectionFunction(BiFunction<List<T>, List<T>, Map<T, Double>> mapFunction) {
+        this.mapFunction = mapFunction;
     }
 
     @Override
     public T apply(List<T> source, List<T> nextPool) {
         double r = random();
         T last = null;
-        Map<T, Double> map = util.rankedDistance(source, nextPool, pc);
+        Map<T, Double> map = mapFunction.apply(source, nextPool);
         for (Entry<T, Double> e : map.entrySet())
             if (!nextPool.contains(e.getKey())) {
                 r -= e.getValue();

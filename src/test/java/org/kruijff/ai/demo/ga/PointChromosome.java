@@ -31,11 +31,8 @@ package org.kruijff.ai.demo.ga;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.doubleToLongBits;
-import static java.lang.Math.PI;
-import static java.lang.Math.cos;
 import static java.lang.Math.exp;
 import static java.lang.Math.pow;
-import static java.lang.Math.random;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.String.format;
@@ -48,8 +45,8 @@ public class PointChromosome
     private static final double O = 7;
     private static final double C = 767;
 
-    double x;
-    double y;
+    final double x;
+    final double y;
 
     public static double fitness(double x, double y) {
         if (x < 0 || x > 4 || y < 0 || y > 4)
@@ -89,14 +86,6 @@ public class PointChromosome
         return fitness(x, y);
     }
 
-    void mutate(double stepSize) {
-        double r = random() - .5;
-        double step = 2 * stepSize * r;
-        double a = 2 * PI * random();
-        x += step * sin(a);
-        y += step * cos(a);
-    }
-
     @Override
     public double partialDiversity(Chromosome obj) {
         if (this == obj)
@@ -110,6 +99,8 @@ public class PointChromosome
 
     private double distance(Chromosome obj) {
         if (x < 0 || x > 4 || y < 0 || y > 4)
+            return 0;
+        if (((PointChromosome) obj).x < 0 || ((PointChromosome) obj).x > 4 || ((PointChromosome) obj).y < 0 || ((PointChromosome) obj).y > 4)
             return 0;
         return distance(((PointChromosome) obj).x, ((PointChromosome) obj).y);
     }

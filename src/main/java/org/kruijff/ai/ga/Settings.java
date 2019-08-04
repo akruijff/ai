@@ -44,7 +44,7 @@ public class Settings<T extends Chromosome> {
     Supplier<T> initFunc;
     BiFunction<List<T>, List<T>, T> selectFunc;
     BiFunction<T, T, T> crossoverFunc;
-    BiConsumer<Population<T>, T> mutationFunc;
+    BiFunction<Population<T>, T, T> mutationFunc;
 
     public int getEvolutionCount() {
         return evolutionCount;
@@ -70,7 +70,11 @@ public class Settings<T extends Chromosome> {
         crossoverPercentage = percentage;
     }
 
-    int crossoverNumber() {
+    int selectionNumber() {
+        return poolSize - crossoverNumber();
+    }
+
+    final int crossoverNumber() {
         return (int) ceil(poolSize * crossoverPercentage);
     }
 
@@ -86,7 +90,7 @@ public class Settings<T extends Chromosome> {
         this.crossoverFunc = f;
     }
 
-    public void setMutationFunction(BiConsumer<Population<T>, T> f) {
+    public void setMutationFunction(BiFunction<Population<T>, T, T> f) {
         this.mutationFunc = f;
     }
 }

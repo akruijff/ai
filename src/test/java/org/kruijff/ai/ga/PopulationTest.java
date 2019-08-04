@@ -73,6 +73,7 @@ public class PopulationTest {
         settings.setPoolSize(8);
         settings.setEliteSize(3);
         settings.setMutationChance(0);
+        settings.setCrossoverPercentage(1);
         settings.selectFunc = new SelectNthElementFunction();
         settings.crossoverFunc = (left, rigth) -> new ID();
         Population<ID> p1 = new Population<>(settings).init();
@@ -87,9 +88,10 @@ public class PopulationTest {
 
     @Test
     public void mutate() {
+        settings.setCrossoverPercentage(0);
         settings.setMutationChance(1);
         settings.selectFunc = new SelectNthElementFunction();
-        settings.mutationFunc = (p, id) -> id.setValue(id.getValue() + settings.poolSize);
+        settings.mutationFunc = (p, id) -> new ID(id.getValue() + settings.poolSize);
         Population<ID> p1 = new Population<>(settings).init();
         Population<ID> p2 = p1.evolution(stop);
         assertEquals(settings.poolSize, p1.size());
@@ -105,7 +107,7 @@ public class PopulationTest {
         settings.setMutationChance(1);
         settings.selectFunc = new SelectNthElementFunction();
         settings.crossoverFunc = (left, rigth) -> new ID();
-        settings.mutationFunc = (p, id) -> id.setValue(id.getValue() + settings.poolSize);
+        settings.mutationFunc = (p, id) -> new ID(id.getValue() + settings.poolSize);
         Population<ID> p = new Population<>(settings);
         TestPopulationListener l = new TestPopulationListener();
         p.addPopulationListener(l);
