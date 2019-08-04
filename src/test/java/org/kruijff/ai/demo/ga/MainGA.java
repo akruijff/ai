@@ -76,7 +76,7 @@ public class MainGA {
         settings.setSelectFunction(new SelectionFunction<>(mapFunction));
         settings.setCrossoverFunction((left, rigth) -> random() < .5
                 ? new PointChromosome(left.x, rigth.y)
-                : new PointChromosome(left.y, rigth.x));
+                : new PointChromosome(rigth.x, left.y));
         settings.setMutationFunction((p, c) -> mutate(c));
 
         Population<PointChromosome> p = new Population<>(settings);
