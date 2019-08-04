@@ -38,7 +38,6 @@ import org.kruijff.ai.ga.Chromosome;
 public class SelectionFunction<T extends Chromosome>
         implements BiFunction<List<T>, List<T>, T> {
 
-    private final ChanceUtil<T> util = new ChanceUtil<>();
     private final BiFunction<List<T>, List<T>, Map<T, Double>> mapFunction;
 
     public SelectionFunction(BiFunction<List<T>, List<T>, Map<T, Double>> mapFunction) {
