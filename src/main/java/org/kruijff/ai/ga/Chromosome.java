@@ -28,21 +28,9 @@
  */
 package org.kruijff.ai.ga;
 
-public interface Chromosome
-        extends Comparable<Chromosome> {
+public interface Chromosome {
 
     public double fitness();
 
     public double partialDiversity(Chromosome e);
-
-    @Override
-    public default int compareTo(Chromosome other) {
-        double a = fitness();
-        double b = other.fitness();
-        if (a > b)
-            return -1;
-        if (a < b)
-            return 1;
-        return 0;
-    }
 }

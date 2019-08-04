@@ -33,6 +33,7 @@ import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.Collections;
 import static java.util.Collections.unmodifiableList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -73,7 +74,7 @@ public class Population<T extends Chromosome> {
     public Population<T> init() {
         while (pool.size() < settings.poolSize)
             pool.add(settings.initFunc.get());
-        Collections.sort(pool);
+        sort();
         listeners.initialPopulation(this);
         return this;
     }
@@ -95,7 +96,7 @@ public class Population<T extends Chromosome> {
         Population<T> current = new Population<>(settings);
         current.listeners = listeners;
 
-        current.elitistSelection(this);
+        current.eliteSelection(this);
         current.selection(this);
         current.mutation();
         current.crossover(this);
@@ -106,75 +107,108 @@ public class Population<T extends Chromosome> {
         return current;
     }
 
-    private void elitistSelection(Population<T> source) {
+    private void eliteSelection(Population<T> source) {
         for (T e : source.getElements())
-            if (!isEliteSelectionDone()) {
-                pool.add(e);
-                listeners.eliteSelectedChromosome(e);
-            } else
+            if (!isEliteSelectionDone())
+                addElite(e);
+            else
                 return;
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Helper methods for eliteSelection">
     private boolean isEliteSelectionDone() {
         return pool.size() >= settings.eliteSize;
     }
 
+    private void addElite(T e) {
+        pool.add(e);
+        listeners.eliteSelectedChromosome(e);
+    }
+    //</editor-fold>
+
     private void selection(Population<T> source) {
         while (!isSelectionDone()) {
             T e = settings.selectFunc.apply(source.pool, pool);
-            if (!pool.contains(e)) {
-                pool.add(e);
-                listeners.selectedChromosome(e);
-            } else {
-                int index = pool.indexOf(e);
-                System.out.println();
-            }
+            if (!pool.contains(e))
+                addSelected(e);
         }
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Helper methods for selection">
     private boolean isSelectionDone() {
         return pool.size() >= settings.selectionNumber();
     }
 
+    private void addSelected(T e) {
+        pool.add(e);
+        listeners.selectedChromosome(e);
+    }
+    //</editor-fold>
+
     private void mutation() {
-        List<T> removals = new ArrayList<>();
-        List<T> mutations = new ArrayList<>();
+        MutationManager manager = new MutationManager();
         for (T e : pool)
             if (shouldMutate()) {
                 T mutation = settings.mutationFunc.apply(this, e);
-                removals.add(e);
-                mutations.add(mutation);
-                listeners.mutatedChromosome(e);
+                manager.register(e, mutation);
             }
-        pool.removeAll(removals);
-        pool.addAll(mutations);
+        manager.storeMutation(pool);
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Helper methods for mutation">
     private boolean shouldMutate() {
         return random() < settings.mutationChance;
     }
 
+    private class MutationManager {
+
+        private final List<T> removals = new ArrayList<>();
+        private final List<T> mutations = new ArrayList<>();
+
+        private void register(T e, T mutation) {
+            removals.add(e);
+            mutations.add(mutation);
+            listeners.mutatedChromosome(mutation);
+        }
+
+        private void storeMutation(List<T> pool) {
+            pool.removeAll(removals);
+            pool.addAll(mutations);
+        }
+    }
+    //</editor-fold>
+
     private void crossover(Population<T> source) {
         for (int i = 0; i < settings.crossoverNumber(); ++i) {
             T e = createChild(source);
-            pool.add(e);
-            listeners.crossoverChromosome(e);
+            addChild(e);
         }
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Helper methods for crossover">
     private T createChild(Population<T> source) {
         T first = selectRandom(source);
         T second = selectRandom(source);
         return settings.crossoverFunc.apply(first, second);
     }
 
+    private void addChild(T e) {
+        pool.add(e);
+        listeners.crossoverChromosome(e);
+    }
+
     private T selectRandom(Population<T> source) {
         int index = (int) (random() * source.size());
         return source.pool.get(index);
     }
+    //</editor-fold>
 
     private void sort() {
-        Collections.sort(pool);
+        sort((left, right) -> left.fitness() < right.fitness() ? -1 : 1);
+    }
+
+    private final void sort(Comparator<T> comperator) {
+        Collections.sort(pool, comperator);
     }
 
     public int size() {
