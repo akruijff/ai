@@ -69,9 +69,9 @@ public class PopulationTest {
     }
 
     @Test
-    public void crossover() {
+    public void crossover_ZeroElite() {
         settings.setPoolSize(8);
-        settings.setEliteSize(3);
+        settings.setEliteSize(0);
         settings.setMutationChance(0);
         settings.setCrossoverPercentage(1);
         settings.selectFunc = new SelectNthElementFunction();
@@ -87,17 +87,52 @@ public class PopulationTest {
     }
 
     @Test
-    public void mutate() {
+    public void crossover_ThreeElite() {
+        int e = 3;
+        settings.setPoolSize(8);
+        settings.setEliteSize(e);
+        settings.setMutationChance(0);
+        settings.setCrossoverPercentage(1);
+        settings.selectFunc = new SelectNthElementFunction();
+        settings.crossoverFunc = (left, rigth) -> new ID();
+        Population<ID> p1 = new Population<>(settings).init();
+        Population<ID> p2 = p1.evolution(stop);
+        assertEquals(settings.poolSize, p1.size());
+        assertEquals(settings.poolSize, p2.size());
+        for (int i = 0; i < settings.poolSize; ++i)
+            assertPopulationContains(p2, new ID(i + 1 + p1.size() - e));
+    }
+
+    @Test
+    public void mutate_ZeroElite() {
+        settings.setEliteSize(0);
         settings.setCrossoverPercentage(0);
         settings.setMutationChance(1);
         settings.selectFunc = new SelectNthElementFunction();
         settings.mutationFunc = (p, id) -> new ID(id.getValue() + settings.poolSize);
+
         Population<ID> p1 = new Population<>(settings).init();
         Population<ID> p2 = p1.evolution(stop);
         assertEquals(settings.poolSize, p1.size());
         assertEquals(settings.poolSize, p2.size());
         for (int i = 0; i < settings.poolSize; ++i)
             assertPopulationContains(p2, new ID(i + 1 + settings.poolSize));
+    }
+
+    @Test
+    public void mutate_EightElite() {
+        settings.setEliteSize(8);
+        settings.setCrossoverPercentage(0);
+        settings.setMutationChance(1);
+        settings.selectFunc = new SelectNthElementFunction();
+        settings.mutationFunc = (p, id) -> new ID(id.getValue() + settings.poolSize);
+
+        Population<ID> p1 = new Population<>(settings).init();
+        Population<ID> p2 = p1.evolution(stop);
+        assertEquals(settings.poolSize, p1.size());
+        assertEquals(settings.poolSize, p2.size());
+        for (int i = 0; i < settings.poolSize; ++i)
+            assertPopulationContains(p2, new ID(i + 1));
     }
 
     @Test
@@ -108,19 +143,20 @@ public class PopulationTest {
         settings.selectFunc = new SelectNthElementFunction();
         settings.crossoverFunc = (left, rigth) -> new ID();
         settings.mutationFunc = (p, id) -> new ID(id.getValue() + settings.poolSize);
-        Population<ID> p = new Population<>(settings);
+
         TestPopulationListener l = new TestPopulationListener();
+        Population<ID> p = new Population<>(settings);
         p.addPopulationListener(l);
         p.init();
-        p.evolution(stop);
+        Population<ID> p2 = p.evolution(stop);
 
         int size = p.size();
-        assertEquals(1, l.initialCount());
+        assertEquals(p.size(), p2.size());
         assertEquals(1, l.startEvolvingCount());
         assertEquals(1, l.initialCount());
-        assertEquals(e, l.selectedCount());
-        assertEquals(size - e, l.crossoverCount());
-        assertEquals(size, l.mutationCount());
+        assertEquals(e, l.eliteSelectedCount());
+        assertEquals(size, l.eliteSelectedCount() + l.selectedCount() + l.crossoverCount());
+        assertEquals(size - e, l.mutationCount());
         assertEquals(1, l.endEvolvingCount());
     }
 

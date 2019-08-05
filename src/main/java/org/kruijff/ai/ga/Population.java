@@ -41,12 +41,14 @@ public class Population<T extends Chromosome> {
 
     private final Settings<T> settings;
     private final List<T> pool;
+    private final List<T> elite;
     private int preventLoop;
     private PopulationListenerCollection<T> listeners = new PopulationListenerCollection<>();
 
     public Population(Settings<T> settings) {
         this.settings = settings;
         pool = new ArrayList<>(settings.poolSize);
+        elite = new ArrayList<>(settings.eliteSize);
     }
 
     @Override
@@ -98,8 +100,8 @@ public class Population<T extends Chromosome> {
 
         current.eliteSelection(this);
         current.selection(this);
-        current.mutation();
         current.crossover(this);
+        current.mutation();
         current.sort();
 
         ++settings.evolutionCount;
@@ -122,6 +124,7 @@ public class Population<T extends Chromosome> {
 
     private void addElite(T e) {
         pool.add(e);
+        elite.add(e);
         listeners.eliteSelectedChromosome(e);
     }
     //</editor-fold>
@@ -148,7 +151,7 @@ public class Population<T extends Chromosome> {
     private void mutation() {
         MutationManager manager = new MutationManager();
         for (T e : pool)
-            if (shouldMutate()) {
+            if (shouldMutate(e)) {
                 T mutation = settings.mutationFunc.apply(this, e);
                 manager.register(e, mutation);
             }
@@ -156,8 +159,8 @@ public class Population<T extends Chromosome> {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Helper methods for mutation">
-    private boolean shouldMutate() {
-        return random() < settings.mutationChance;
+    private boolean shouldMutate(T e) {
+        return random() < settings.mutationChance && !elite.contains(e);
     }
 
     private class MutationManager {

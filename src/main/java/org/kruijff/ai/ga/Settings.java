@@ -28,9 +28,9 @@
  */
 package org.kruijff.ai.ga;
 
+import static java.lang.Integer.max;
 import static java.lang.Math.ceil;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -71,11 +71,11 @@ public class Settings<T extends Chromosome> {
     }
 
     int selectionNumber() {
-        return poolSize - crossoverNumber();
+        return max(poolSize - crossoverNumber(), 0);
     }
 
     final int crossoverNumber() {
-        return (int) ceil(poolSize * crossoverPercentage);
+        return max((int) ceil(poolSize * crossoverPercentage) - eliteSize, 0);
     }
 
     public void setInitFunction(Supplier<T> f) {
