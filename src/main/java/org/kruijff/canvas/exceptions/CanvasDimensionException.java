@@ -26,36 +26,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.canvas.x;
+package org.kruijff.canvas.exceptions;
 
-import java.awt.image.BufferedImage;
-import org.kruijff.canvas.exceptions.CanvasDimensionException;
+public class CanvasDimensionException
+        extends RuntimeException {
 
-public class Canvas {
+    private final int width;
+    private final int height;
 
-    private final CanvasComponent comp;
-
-    Canvas(CanvasComponent comp) {
-        this.comp = comp;
-    }
-
-    public int getWidth() {
-        return comp.getImage().getWidth();
-    }
-
-    public int getHeight() {
-        return comp.getImage().getHeight();
-    }
-
-    public int[] loadPixels() {
-        final BufferedImage img = comp.getImage();
-        return img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
-    }
-
-    public void updatePixels(int[] pixels) {
-        BufferedImage img = comp.getImage();
-        if (pixels.length != img.getWidth() * img.getHeight())
-            throw new CanvasDimensionException(img.getWidth(), img.getHeight());
-        img.setRGB(0, 0, img.getWidth(), img.getHeight(), pixels, 0, img.getWidth());
+    public CanvasDimensionException(int width, int height) {
+        this.width = width;
+        this.height = height;
     }
 }
