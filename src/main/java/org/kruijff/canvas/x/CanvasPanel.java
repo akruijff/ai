@@ -44,11 +44,14 @@ public class CanvasPanel
     private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
 
+    private Canvas canvas;
+
     /**
      * Creates new form CanvasPanel
      */
     public CanvasPanel() {
         initComponents();
+        canvas = new Canvas(canvasComponent);
     }
 
     /**
@@ -140,5 +143,9 @@ public class CanvasPanel
 
     public void addControl(Component comp, Object constrains, int index) {
         controlsPanel.add(comp, constrains, index);
+    }
+
+    public Canvas canvas() {
+        return canvas;
     }
 }

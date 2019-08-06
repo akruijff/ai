@@ -122,4 +122,8 @@ public class CanvasFrame
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    public Canvas canvas() {
+        return canvasPanel.canvas();
+    }
 }
