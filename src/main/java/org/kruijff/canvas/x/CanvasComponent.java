@@ -30,12 +30,9 @@ package org.kruijff.canvas.x;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 
 public class CanvasComponent
         extends JComponent {
@@ -48,20 +45,6 @@ public class CanvasComponent
         width = 400;
         height = 300;
         img = new BufferedImage(width, height, TYPE_INT_RGB);
-        setLayout();
-    }
-
-    private void setLayout() {
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 300, Short.MAX_VALUE)
-        );
     }
 
     @Override
@@ -77,35 +60,8 @@ public class CanvasComponent
     Graphics getImageGraphics() {
         return img.getGraphics();
     }
-    
+
     BufferedImage getImage() {
         return img;
-    }
-
-    @Override
-    protected void processMouseMotionEvent(MouseEvent e) {
-        super.processMouseMotionEvent(e); //To change body of generated methods, choose Tools | Templates.
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-    }
-
-    @Override
-    protected void processMouseEvent(MouseEvent e) {
-        super.processMouseEvent(e); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
-        return super.processKeyBinding(ks, e, condition, pressed); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    protected void processKeyEvent(KeyEvent e) {
-        super.processKeyEvent(e); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    protected void processComponentKeyEvent(KeyEvent e) {
-        super.processComponentKeyEvent(e); //To change body of generated methods, choose Tools | Templates.
     }
 }
