@@ -29,6 +29,7 @@
 package org.kruijff.canvas.x;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import org.kruijff.canvas.exceptions.CanvasDimensionException;
 
 public class Canvas {
@@ -57,5 +58,13 @@ public class Canvas {
         if (pixels.length != img.getWidth() * img.getHeight())
             throw new CanvasDimensionException(img.getWidth(), img.getHeight());
         img.setRGB(0, 0, img.getWidth(), img.getHeight(), pixels, 0, img.getWidth());
+    }
+
+    public void background(int c) {
+        BufferedImage img = comp.getImage();
+        int width = img.getWidth(), height = img.getHeight();
+        int[] pixels = new int[width * height];
+        Arrays.fill(pixels, c);
+        img.setRGB(0, 0, width, height, pixels, 0, width);
     }
 }

@@ -30,6 +30,7 @@ package org.kruijff.canvas.x;
 
 import java.awt.Component;
 import static java.util.Arrays.setAll;
+import java.util.function.IntUnaryOperator;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import org.junit.After;
@@ -113,51 +114,31 @@ public class CanvasTest {
 
     @Test
     public void canvas_uploadPixels() {
-        int n = canvas.getWidth() * canvas.getHeight();
-        int[] arr = new int[n];
-        setAll(arr, i -> i);
-
-        canvas.updatePixels(arr);
-
-        int[] pixels = canvas.loadPixels();
-        setAll(pixels, i -> pixels[i] & mask(0, 255, 255, 255));
-        assertArrayEquals(arr, pixels);
+        int[] actual = setPixels(i -> i);
+        canvas.updatePixels(actual);
+        assertPixelsEquals(actual, canvas.loadPixels());
     }
 
-    private static int clip(final int s, int mask) {
-        return s & mask;
+    @Test
+    public void background() {
+        int c = 255 * 16 + 255 * 8 + 255;
+        int[] expected = setPixels(i -> c);
+        canvas.background(c);
+        assertPixelsEquals(expected, canvas.loadPixels());
+    }
+
+    private int[] setPixels(IntUnaryOperator generator) {
+        int[] actual = new int[canvas.getWidth() * canvas.getHeight()];
+        setAll(actual, generator);
+        return actual;
+    }
+
+    private void assertPixelsEquals(int[] expected, int[] actual) {
+        setAll(actual, i -> actual[i] & mask(0, 255, 255, 255));
+        assertArrayEquals(expected, actual);
     }
 
     private static int mask(int a, int r, int g, int b) {
         return (a << 24) + (r << 16) + (g << 8) + b;
     }
-//    @Test
-//    public void test() {
-//        CanvasFrame frame = new CanvasFrame();
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setVisible(true);
-//
-//        CanvasComponent canvas = SwingUtil.fetchChildNamed(frame, "canvas", CanvasComponent.class);
-//        JLabel status = SwingUtil.fetchChildNamed(frame, "status", JLabel.class);
-//        frame.addMouseMotionListener(new MouseMotionListener() {
-//            @Override
-//            public void mouseDragged(MouseEvent e) {
-//                status.setText(e.toString());
-//            }
-//
-//            @Override
-//            public void mouseMoved(MouseEvent e) {
-//                status.setText(e.toString());
-//            }
-//        });
-//        MouseEvent e = new MouseEvent(status,
-//                                      MouseEvent.MOUSE_MOVED,
-//                                      System.currentTimeMillis() + 10,
-//                                      0,
-//                                      200, 201,
-//                                      0, false);
-//        invokeLater(() -> frame.dispatchEvent(e));
-//        canvas.dispatchEvent(e);
-//        frame.dispatchEvent(e);
-//    }
 }
