@@ -28,13 +28,17 @@
  */
 package org.kruijff.canvas.x;
 
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.kruijff.canvas.exceptions.CanvasDimensionException;
 
 public class Canvas {
 
     private final CanvasComponent comp;
+    private final CanvasListenerList listenerList = new CanvasListenerList();
 
     public static int color(int gray) {
         return color(gray, 0);
@@ -82,5 +86,28 @@ public class Canvas {
         int[] pixels = new int[width * height];
         Arrays.fill(pixels, c);
         img.setRGB(0, 0, width, height, pixels, 0, width);
+    }
+
+    public void setStatus(String status) {
+        listenerList.statusChanged(status);
+    }
+
+    public void addMouseMotionListener(MouseMotionListener listener) {
+        comp.addMouseMotionListener(listener);
+    }
+
+    void addCanvasListener(CanvasListener listeners) {
+        listenerList.list.add(listeners);
+    }
+
+    private static class CanvasListenerList
+            implements CanvasListener {
+
+        private List<CanvasListener> list = new ArrayList<>();
+
+        @Override
+        public void statusChanged(String status) {
+            list.stream().forEach(l -> l.statusChanged(status));
+        }
     }
 }

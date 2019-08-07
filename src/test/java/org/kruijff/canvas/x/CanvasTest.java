@@ -29,13 +29,20 @@
 package org.kruijff.canvas.x;
 
 import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import static java.util.Arrays.setAll;
 import java.util.function.IntUnaryOperator;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import static org.awaitility.Awaitility.await;
+import org.hamcrest.core.IsNot;
+import org.hamcrest.text.IsEmptyString;
 import org.junit.After;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,6 +74,19 @@ public class CanvasTest {
             components[i].setName(names[i]);
         }
         return components;
+    }
+
+    @Test(timeout = 1000)
+    public void mouseAndStatusBar() {
+        JLabel statusLabel = fetchChildNamed(frame, "status", JLabel.class);
+        canvas.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                canvas.setStatus("(" + e.getX() + ", " + e.getY() + ')');
+            }
+        });
+        frame.dispatchEvent(new MouseEvent(frame, MouseEvent.MOUSE_MOVED, 0, 0, 150, 250, 0, false));
+        assertNotNull(await().until(statusLabel::getText, new IsNot<>(new IsEmptyString())));
     }
 
     @Test

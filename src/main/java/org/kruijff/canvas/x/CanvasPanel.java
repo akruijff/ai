@@ -52,6 +52,12 @@ public class CanvasPanel
     public CanvasPanel() {
         initComponents();
         canvas = new Canvas(canvasComponent);
+        canvas.addCanvasListener(new CanvasListener() {
+            @Override
+            public void statusChanged(String status) {
+                statusLabel.setText(status);
+            }
+        });
     }
 
     /**
@@ -82,7 +88,6 @@ public class CanvasPanel
 
         statusPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        statusLabel.setText("Status");
         statusLabel.setToolTipText("");
         statusLabel.setName("status"); // NOI18N
 
