@@ -28,14 +28,17 @@
  */
 package org.kruijff.canvas.x;
 
+import java.awt.Component;
 import static java.util.Arrays.setAll;
-import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
 import org.junit.After;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import org.junit.Before;
 import org.junit.Test;
 import org.kruijff.canvas.exceptions.CanvasDimensionException;
+import static org.kruijff.utilities.swing.SwingUtil.fetchChildNamed;
 
 public class CanvasTest {
 
@@ -45,8 +48,6 @@ public class CanvasTest {
     @Before
     public void setup() {
         frame = new CanvasFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
         canvas = frame.canvas();
     }
 
@@ -54,6 +55,54 @@ public class CanvasTest {
     public void teardown() {
         frame.setVisible(false);
         frame = null;
+    }
+
+    private static Component[] createComponents(String... names) {
+        Component[] components = new Component[names.length];
+        for (int i = 0; i < names.length; ++i) {
+            components[i] = new JSlider();
+            components[i].setName(names[i]);
+        }
+        return components;
+    }
+
+    @Test
+    public void addControl() {
+        Component[] expected = createComponents("slider1", "slider2");
+        frame.addControl(expected[0]);
+        frame.addControl(expected[1]);
+        JPanel controls = fetchChildNamed(frame, "controls", JPanel.class);
+        Component[] components = controls.getComponents();
+        assertSame(expected[0], components[0]);
+        assertSame(expected[1], components[1]);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addControl_WrongIndex() {
+        Component[] expected = createComponents("slider1", "slider2");
+        frame.addControl(expected[0], 1);
+    }
+
+    @Test
+    public void addControl_Index() {
+        Component[] expected = createComponents("slider1", "slider2");
+        frame.addControl(expected[0]);
+        frame.addControl(expected[1], 0);
+        JPanel controls = fetchChildNamed(frame, "controls", JPanel.class);
+        Component[] components = controls.getComponents();
+        assertSame(expected[0], components[1]);
+        assertSame(expected[1], components[0]);
+    }
+
+    @Test
+    public void addControl_LastIndex() {
+        Component[] expected = createComponents("slider1", "slider2");
+        frame.addControl(expected[0]);
+        frame.addControl(expected[1], 1);
+        JPanel controls = fetchChildNamed(frame, "controls", JPanel.class);
+        Component[] components = controls.getComponents();
+        assertSame(expected[0], components[0]);
+        assertSame(expected[1], components[1]);
     }
 
     @Test(expected = CanvasDimensionException.class)

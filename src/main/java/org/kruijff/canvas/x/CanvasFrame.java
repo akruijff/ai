@@ -28,6 +28,7 @@
  */
 package org.kruijff.canvas.x;
 
+import java.awt.Component;
 import static java.awt.EventQueue.invokeLater;
 import javax.swing.JFrame;
 
@@ -122,6 +123,14 @@ public class CanvasFrame
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    public void addControl(Component comp) {
+        canvasPanel.addControl(comp);
+    }
+
+    public void addControl(Component comp, int index) {
+        canvasPanel.addControl(comp, index);
+    }
 
     public Canvas canvas() {
         return canvasPanel.canvas();
