@@ -31,6 +31,8 @@ package org.kruijff.canvas.x;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static java.util.Arrays.setAll;
 import java.util.function.IntUnaryOperator;
 import javax.swing.JLabel;
@@ -166,7 +168,7 @@ public class CanvasTest {
 
     @Test
     public void canvas_uploadPixels() {
-        int[] actual = setPixels(i -> i);
+        int[] actual = createPixels(i -> i);
         canvas.updatePixels(actual);
         assertPixelsEquals(actual, canvas.loadPixels());
     }
@@ -174,12 +176,12 @@ public class CanvasTest {
     @Test
     public void background() {
         int c = 255 * 16 + 255 * 8 + 255;
-        int[] expected = setPixels(i -> c);
+        int[] expected = createPixels(i -> c);
         canvas.background(c);
         assertPixelsEquals(expected, canvas.loadPixels());
     }
 
-    private int[] setPixels(IntUnaryOperator generator) {
+    private int[] createPixels(IntUnaryOperator generator) {
         int[] actual = new int[canvas.getWidth() * canvas.getHeight()];
         setAll(actual, generator);
         return actual;
@@ -192,5 +194,57 @@ public class CanvasTest {
 
     private static int mask(int a, int r, int g, int b) {
         return (a << 24) + (r << 16) + (g << 8) + b;
+    }
+
+    @Test
+    public void circle_fill() {
+        int offsetX = 100, offsetY = 100, r = 10;
+        int circleX = offsetX + r / 2, circleY = offsetY + r / 2;
+        int expected = color(255);
+
+        canvas.fill(expected);
+        canvas.noStroke();
+        canvas.circle(offsetX, offsetY, r);
+
+        --r;
+        for (int x = -1; x < 2; ++x)
+            for (int y = -1; y < 2; ++y)
+                assertPixelEquals(getExpected1(x, y), getX(circleX, x, r), getY(circleY, y, r));
+    }
+
+    @Test
+    public void circle_stroke() {
+        int offsetX = 100, offsetY = 100, r = 10;
+        int circleX = offsetX + r / 2, circleY = offsetY + r / 2;
+        int expected = color(255);
+
+        canvas.noFill();
+        canvas.stroke(expected);
+        canvas.circle(offsetX, offsetY, r);
+
+        for (int x = -1; x < 2; ++x)
+            for (int y = -1; y < 2; ++y)
+                assertPixelEquals(getExpected2(x, y), getX(circleX, x, r), getY(circleY, y, r));
+    }
+
+    private static int getX(int circleX, int x, int r) {
+        return circleX + x * r / 2;
+    }
+
+    private static int getY(int circleY, int y, int r) {
+        return circleY + y * r / 2;
+    }
+
+    private static int getExpected1(int x, int y) {
+        return x == 0 || y == 0 ? color(255) : -16777216;
+    }
+
+    private static int getExpected2(int x, int y) {
+        return x == 0 && y != 0 || x != 0 && y == 0 ? color(255) : -16777216;
+    }
+
+    private void assertPixelEquals(int expected, int x, int y) {
+        int[] actual = canvas.loadPixels();
+        assertEquals(expected, actual[x + y * canvas.getWidth()]);
     }
 }

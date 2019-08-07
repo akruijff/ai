@@ -28,6 +28,8 @@
  */
 package org.kruijff.canvas.x;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -39,6 +41,8 @@ public class Canvas {
 
     private final CanvasComponent comp;
     private final CanvasListenerList listenerList = new CanvasListenerList();
+    private Color fillColor = new Color(255, 255, 255);
+    private Color strokeColor = new Color(255, 255, 255);
 
     public static int color(int gray) {
         return color(gray, 0);
@@ -86,6 +90,52 @@ public class Canvas {
         int[] pixels = new int[width * height];
         Arrays.fill(pixels, c);
         img.setRGB(0, 0, width, height, pixels, 0, width);
+    }
+
+    public void noFill() {
+        fillColor = null;
+    }
+
+    public void fill(int c) {
+        boolean hasAlpha = hasAlpha(c);
+        fillColor = new Color(c, hasAlpha);
+    }
+
+    public void noStroke() {
+        strokeColor = null;
+    }
+
+    public void stroke(int c) {
+        boolean hasAlpha = hasAlpha(c);
+        strokeColor = new Color(c, hasAlpha);
+    }
+
+    private boolean hasAlpha(int c) {
+        return c >= 1 << 24;
+    }
+
+    public void circle(int x, int y, int r) {
+        Graphics g = comp.getImageGraphics();
+        if (fillColor != null) {
+            g.setColor(fillColor);
+            g.fillOval(x, y, r, r);
+        }
+        if (strokeColor != null) {
+            g.setColor(strokeColor);
+            g.drawOval(x, y, r, r);
+        }
+    }
+
+    public void point(int x, int y) {
+        Graphics g = comp.getImageGraphics();
+        BufferedImage img = comp.getImage();
+        if (x < 0 || y < 0 || x >= img.getWidth() || y >= img.getHeight())
+            return;
+        if (strokeColor != null) {
+//            img.setRGB(x, y, strokeColor.getRGB());
+            g.setColor(strokeColor);
+            g.drawLine(x, y, x, y);
+        }
     }
 
     public void setStatus(String status) {

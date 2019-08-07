@@ -36,7 +36,7 @@ public class Canvas {
     private final CanvasFrame frame;
 
     public static int color(int gray) {
-        return color(gray, 0);
+        return color(gray, 255);
     }
 
     public static int color(int gray, int alpha) {
@@ -44,11 +44,14 @@ public class Canvas {
     }
 
     public static int color(int r, int g, int b) {
-        return color(r, g, b, 0);
+        return color(r, g, b, 255);
     }
 
     public static int color(int r, int g, int b, int alpha) {
-        return (alpha << 24) + (r << 16) + (g << 8) + b;
+        return ((alpha & 0xFF) << 24)
+                | ((r & 0xFF) << 16)
+                | ((g & 0xFF) << 8)
+                | ((b & 0xFF) << 0);
     }
 
     public Canvas(int width, int height) {
