@@ -36,6 +36,22 @@ public class Canvas {
 
     private final CanvasComponent comp;
 
+    public static int color(int gray) {
+        return color(gray, 0);
+    }
+
+    public static int color(int gray, int alpha) {
+        return color(gray, gray, gray, alpha);
+    }
+
+    public static int color(int r, int g, int b) {
+        return color(r, g, b, 0);
+    }
+
+    public static int color(int r, int g, int b, int alpha) {
+        return (alpha << 24) + (r << 16) + (g << 8) + b;
+    }
+
     Canvas(CanvasComponent comp) {
         this.comp = comp;
     }

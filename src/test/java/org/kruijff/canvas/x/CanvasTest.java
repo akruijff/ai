@@ -35,9 +35,11 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import org.junit.After;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import org.junit.Before;
 import org.junit.Test;
+import static org.kruijff.canvas.Canvas.color;
 import org.kruijff.canvas.exceptions.CanvasDimensionException;
 import static org.kruijff.utilities.swing.SwingUtil.fetchChildNamed;
 
@@ -110,6 +112,36 @@ public class CanvasTest {
     public void canvas_uploadPixels_ArrayWrongSize() {
         int[] arr = new int[0];
         canvas.updatePixels(arr);
+    }
+
+    @Test
+    public void color_int() {
+        int shade = 128;
+        int expected = (shade << 16) + (shade << 8) + shade;
+        int actual = color(shade);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void color_int_int() {
+        int shade = 128;
+        int expected = (255 << 24) + (shade << 16) + (shade << 8) + shade;
+        int actual = color(128, 255);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void color_int_int_int() {
+        int expected = (192 << 16) + (128 << 8) + 64;
+        int actual = color(192, 128, 64);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void color_int_int_int_int() {
+        int expected = (255 << 24) + (192 << 16) + (128 << 8) + 64;
+        int actual = color(192, 128, 64, 255);
+        assertEquals(expected, actual);
     }
 
     @Test
