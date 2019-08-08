@@ -137,7 +137,7 @@ public class CanvasTest {
     @Test
     public void color_int() {
         int shade = 128;
-        int expected = (shade << 16) + (shade << 8) + shade;
+        int expected = (255 << 24) + (shade << 16) + (shade << 8) + shade;
         int actual = color(shade);
         assertEquals(expected, actual);
     }
@@ -152,7 +152,7 @@ public class CanvasTest {
 
     @Test
     public void color_int_int_int() {
-        int expected = (192 << 16) + (128 << 8) + 64;
+        int expected = (255 << 24) + (192 << 16) + (128 << 8) + 64;
         int actual = color(192, 128, 64);
         assertEquals(expected, actual);
     }
