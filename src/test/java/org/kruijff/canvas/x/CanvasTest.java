@@ -31,8 +31,6 @@ package org.kruijff.canvas.x;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import static java.util.Arrays.setAll;
 import java.util.function.IntUnaryOperator;
 import javax.swing.JLabel;
@@ -241,6 +239,20 @@ public class CanvasTest {
 
     private static int getExpected2(int x, int y) {
         return x == 0 && y != 0 || x != 0 && y == 0 ? color(255) : -16777216;
+    }
+
+    @Test
+    public void point_nostroke() {
+        canvas.noStroke();
+        canvas.point(100, 100);
+        assertPixelEquals(color(0), 100, 100);
+    }
+
+    @Test
+    public void point_stroke() {
+        canvas.stroke(color(255));
+        canvas.point(100, 100);
+        assertPixelEquals(color(255), 100, 100);
     }
 
     private void assertPixelEquals(int expected, int x, int y) {

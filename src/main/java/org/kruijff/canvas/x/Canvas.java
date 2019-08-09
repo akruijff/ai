@@ -132,7 +132,7 @@ public class Canvas {
         if (x < 0 || y < 0 || x >= img.getWidth() || y >= img.getHeight())
             return;
         if (strokeColor != null) {
-//            img.setRGB(x, y, strokeColor.getRGB());
+            img.setRGB(x, y, strokeColor.getRGB());
             g.setColor(strokeColor);
             g.drawLine(x, y, x, y);
         }
