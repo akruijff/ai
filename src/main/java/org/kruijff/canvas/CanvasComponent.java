@@ -28,27 +28,23 @@
  */
 package org.kruijff.canvas;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
-import java.util.Arrays;
-import javax.swing.JLabel;
+import javax.swing.JComponent;
 
-public class CanvasImage
-        extends JLabel {
+public class CanvasComponent
+        extends JComponent {
 
-    private final BufferedImage img;
     private final int width;
     private final int height;
-    private Color fillColor = new Color(255, 0, 0);
-    private Color strokeColor = new Color(255, 255, 255);
+    private final BufferedImage img;
 
-    public CanvasImage(int width, int height) {
+    public CanvasComponent() {
+        width = 400;
+        height = 300;
         img = new BufferedImage(width, height, TYPE_INT_RGB);
-        this.width = width;
-        this.height = height;
     }
 
     @Override
@@ -61,55 +57,11 @@ public class CanvasImage
         g.drawImage(img, 0, 0, this);
     }
 
-    int[] loadPixels() {
-        return img.getRGB(0, 0, width, height, null, 0, width);
+    Graphics getImageGraphics() {
+        return img.getGraphics();
     }
 
-    void updatePixels(int[] pixels) {
-        img.setRGB(0, 0, width, height, pixels, 0, width);
-    }
-
-    void background(int c) {
-        int[] pixels = new int[width * height];
-        Arrays.fill(pixels, c);
-        img.setRGB(0, 0, width, height, pixels, 0, width);
-    }
-
-    void noFill() {
-        fillColor = null;
-    }
-
-    void fill(int c) {
-        fillColor = new Color(c);
-    }
-
-    void noStroke() {
-        strokeColor = null;
-    }
-
-    void stroke(int c) {
-        strokeColor = new Color(c);
-    }
-
-    void circle(int x, int y, int r) {
-        Graphics g = img.getGraphics();
-        if (fillColor != null) {
-            g.setColor(fillColor);
-            g.fillOval(x, y, r, r);
-        }
-        if (strokeColor != null) {
-            g.setColor(strokeColor);
-            g.drawOval(x, y, r, r);
-        }
-    }
-
-    void point(int x, int y, int c) {
-        if (x < 0 || y < 0 || x >= width || y >= height)
-            return;
-        if (strokeColor != null) {
-            img.setRGB(x, y, strokeColor.getRGB());
-            invalidate();
-            repaint();
-        }
+    BufferedImage getImage() {
+        return img;
     }
 }

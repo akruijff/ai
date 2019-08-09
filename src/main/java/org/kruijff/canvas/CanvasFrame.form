@@ -50,7 +50,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="org.kruijff.canvas.x.CanvasPanel" name="canvasPanel">
+    <Component class="org.kruijff.canvas.CanvasPanel" name="canvasPanel">
     </Component>
   </SubComponents>
 </Form>

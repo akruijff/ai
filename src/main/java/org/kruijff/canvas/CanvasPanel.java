@@ -26,7 +26,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kruijff.canvas.x;
+package org.kruijff.canvas;
 
 import java.awt.Component;
 
@@ -38,7 +38,7 @@ public class CanvasPanel
         extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private org.kruijff.canvas.x.CanvasComponent canvasComponent;
+    private org.kruijff.canvas.CanvasComponent canvasComponent;
     private javax.swing.JPanel controlsPanel;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JPanel statusPanel;
@@ -70,7 +70,7 @@ public class CanvasPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        canvasComponent = new org.kruijff.canvas.x.CanvasComponent();
+        canvasComponent = new org.kruijff.canvas.CanvasComponent();
         statusPanel = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
         controlsPanel = new javax.swing.JPanel();

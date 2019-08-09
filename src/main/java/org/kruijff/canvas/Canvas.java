@@ -28,12 +28,21 @@
  */
 package org.kruijff.canvas;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.kruijff.canvas.exceptions.CanvasDimensionException;
+
 public class Canvas {
 
-    private static final long serialVersionUID = 1L;
-
-    private final CanvasImage img;
-    private final CanvasFrame frame;
+    private final CanvasComponent comp;
+    private final CanvasListenerList listenerList = new CanvasListenerList();
+    private Color fillColor = new Color(255, 255, 255);
+    private Color strokeColor = new Color(255, 255, 255);
 
     public static int color(int gray) {
         return color(gray, 255);
@@ -48,75 +57,107 @@ public class Canvas {
     }
 
     public static int color(int r, int g, int b, int alpha) {
-        return ((alpha & 0xFF) << 24)
-                | ((r & 0xFF) << 16)
-                | ((g & 0xFF) << 8)
-                | ((b & 0xFF) << 0);
+        return (alpha << 24) + (r << 16) + (g << 8) + b;
     }
 
-    public Canvas(int width, int height) {
-        img = new CanvasImage(width, height);
-        background(color(0));
-
-        frame = new CanvasFrame();
-        frame.add(img);
-        frame.setVisible(true);
-        frame.pack();
+    Canvas(CanvasComponent comp) {
+        this.comp = comp;
     }
 
-    public void status(String str) {
-        frame.status(str);
+    public int getWidth() {
+        return comp.getImage().getWidth();
+    }
+
+    public int getHeight() {
+        return comp.getImage().getHeight();
     }
 
     public int[] loadPixels() {
-        return img.loadPixels();
+        final BufferedImage img = comp.getImage();
+        return img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
     }
 
     public void updatePixels(int[] pixels) {
-        img.updatePixels(pixels);
+        BufferedImage img = comp.getImage();
+        if (pixels.length != img.getWidth() * img.getHeight())
+            throw new CanvasDimensionException(img.getWidth(), img.getHeight());
+        img.setRGB(0, 0, img.getWidth(), img.getHeight(), pixels, 0, img.getWidth());
     }
 
-    private void background(int c) {
-        img.background(c);
+    public void background(int c) {
+        BufferedImage img = comp.getImage();
+        int width = img.getWidth(), height = img.getHeight();
+        int[] pixels = new int[width * height];
+        Arrays.fill(pixels, c);
+        img.setRGB(0, 0, width, height, pixels, 0, width);
     }
 
     public void noFill() {
-        img.noFill();
+        fillColor = null;
     }
 
     public void fill(int c) {
-        img.fill(c);
+        boolean hasAlpha = hasAlpha(c);
+        fillColor = new Color(c, hasAlpha);
     }
 
     public void noStroke() {
-        img.noStroke();
+        strokeColor = null;
     }
 
     public void stroke(int c) {
-        img.stroke(c);
+        boolean hasAlpha = hasAlpha(c);
+        strokeColor = new Color(c, hasAlpha);
+    }
+
+    private boolean hasAlpha(int c) {
+        return c >= 1 << 24;
     }
 
     public void circle(int x, int y, int r) {
-        img.circle(x, y, r);
+        Graphics g = comp.getImageGraphics();
+        if (fillColor != null) {
+            g.setColor(fillColor);
+            g.fillOval(x, y, r, r);
+        }
+        if (strokeColor != null) {
+            g.setColor(strokeColor);
+            g.drawOval(x, y, r, r);
+        }
     }
 
-    private void point(int x, int y, int c) {
-        img.point(x, y, c);
+    public void point(int x, int y) {
+        Graphics g = comp.getImageGraphics();
+        BufferedImage img = comp.getImage();
+        if (x < 0 || y < 0 || x >= img.getWidth() || y >= img.getHeight())
+            return;
+        if (strokeColor != null) {
+            img.setRGB(x, y, strokeColor.getRGB());
+            g.setColor(strokeColor);
+            g.drawLine(x, y, x, y);
+        }
     }
 
-    public int width() {
-        return img.getWidth();
+    public void setStatus(String status) {
+        listenerList.statusChanged(status);
     }
 
-    public int height() {
-        return img.getHeight();
+    public void addMouseMotionListener(MouseMotionListener listener) {
+        comp.addMouseMotionListener(listener);
     }
 
-    public void close() {
+    void addCanvasListener(CanvasListener listeners) {
+        listenerList.list.add(listeners);
     }
 
-    public void repaint() {
-        img.invalidate();
-        img.repaint();
+    private static class CanvasListenerList
+            implements CanvasListener {
+
+        private List<CanvasListener> list = new ArrayList<>();
+
+        @Override
+        public void statusChanged(String status) {
+            list.stream().forEach(l -> l.statusChanged(status));
+        }
     }
 }

@@ -31,21 +31,25 @@ package org.kruijff.ai.demo.ga;
 import org.kruijff.ai.ga.Population;
 import org.kruijff.ai.ga.PopulationListener;
 import org.kruijff.canvas.Canvas;
+import static org.kruijff.canvas.Canvas.color;
+import org.kruijff.canvas.CanvasFrame;
 
-public class HillClimbingCanvas
-        extends Canvas
+public class HillClimbingDrawer
         implements PopulationListener<PointChromosome> {
 
     private static final int W = 4;
     private static final int H = 4;
     private static final int R = 8;
-    private static final int ELITE_SELECTED_COLOR = color(255, 0,0);
+    private static final int ELITE_SELECTED_COLOR = color(255, 0, 0);
     private static final int SELECTED_COLOR = color(0, 255, 0);
     private static final int MUTATED_COLOR = color(255, 0, 255);
     private static final int CROSSOVER_COLOR = color(0, 0, 255);
+    private final CanvasFrame frame;
+    private final Canvas canvas;
 
-    public HillClimbingCanvas(int width, int height) {
-        super(width, height);
+    public HillClimbingDrawer(CanvasFrame frame) {
+        this.frame = frame;
+        this.canvas = frame.canvas();
     }
 
     @Override
@@ -58,54 +62,54 @@ public class HillClimbingCanvas
     }
 
     void drawBackground() {
-        int pixels[] = loadPixels();
-        for (int x = 0; x < width(); ++x)
-            for (int y = 0; y < height(); ++y) {
-                double xx = 4d * x / width();
-                double yy = 4d * (height() - y) / height();
+        int pixels[] = canvas.loadPixels();
+        for (int x = 0; x < canvas.getWidth(); ++x)
+            for (int y = 0; y < canvas.getHeight(); ++y) {
+                double xx = 4d * x / canvas.getWidth();
+                double yy = 4d * (canvas.getHeight() - y) / canvas.getHeight();
                 int f = (int) PointChromosome.fitness(xx, yy);
                 int c = Canvas.color(f % 256);
-                pixels[x + width() * y] = c;
+                pixels[x + canvas.getWidth() * y] = c;
             }
-        updatePixels(pixels);
+        canvas.updatePixels(pixels);
     }
 
     @Override
     public void eliteSelectedChromosome(PointChromosome c) {
-        fill(ELITE_SELECTED_COLOR);
-        noStroke();
+        canvas.fill(ELITE_SELECTED_COLOR);
+        canvas.noStroke();
         drawChromsome(c);
     }
 
     @Override
     public void selectedChromosome(PointChromosome c) {
-        fill(SELECTED_COLOR);
-        noStroke();
+        canvas.fill(SELECTED_COLOR);
+        canvas.noStroke();
         drawChromsome(c);
     }
 
     @Override
     public void mutatedChromosome(PointChromosome c) {
-        fill(MUTATED_COLOR);
-        noStroke();
+        canvas.fill(MUTATED_COLOR);
+        canvas.noStroke();
         drawChromsome(c);
     }
 
     @Override
     public void crossoverChromosome(PointChromosome c) {
-        fill(CROSSOVER_COLOR);
-        noStroke();
+        canvas.fill(CROSSOVER_COLOR);
+        canvas.noStroke();
         drawChromsome(c);
     }
 
     private void drawChromsome(PointChromosome c) {
-        int x = (int) (width() * c.x / W);
-        int y = (int) (height() * (H - c.y) / H);
-        circle(x, y, R);
+        int x = (int) (canvas.getWidth() * c.x / W);
+        int y = (int) (canvas.getHeight() * (H - c.y) / H);
+        canvas.circle(x, y, R);
     }
 
     @Override
     public void endEvolvingPopulation(Population<PointChromosome> p) {
-        repaint();
+        frame.repaintCanvas();
     }
 }

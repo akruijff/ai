@@ -34,7 +34,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="org.kruijff.canvas.x.CanvasComponent" name="canvasComponent">
+    <Container class="org.kruijff.canvas.CanvasComponent" name="canvasComponent">
 
       <Layout>
         <DimensionLayout dim="0">

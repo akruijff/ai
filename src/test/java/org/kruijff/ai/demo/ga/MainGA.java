@@ -41,6 +41,7 @@ import org.kruijff.ai.ga.Settings;
 import org.kruijff.ai.ga.fitness.ChanceUtil;
 import org.kruijff.ai.ga.fitness.SelectionFunction;
 import org.kruijff.ai.ga.stop.MaxEvolutionStopCondition;
+import org.kruijff.canvas.CanvasFrame;
 
 public class MainGA {
 
@@ -49,11 +50,12 @@ public class MainGA {
 
     public static void main(String[] args) {
         Settings<PointChromosome> settings = getSettings();
-        HillClimbingCanvas canvas = new HillClimbingCanvas(1024, 768);
+        CanvasFrame frame = new CanvasFrame();
+        HillClimbingDrawer canvas = new HillClimbingDrawer(frame);
+        frame.setVisible(true);
         Population<PointChromosome> best = buildAndEvolvePopupation(settings, canvas);
         System.out.println("Evolution count: " + settings.getEvolutionCount());
         System.out.println("Best chromosone: " + best.getBest());
-        canvas.close();
     }
 
     private static Settings<PointChromosome> getSettings() {
@@ -70,7 +72,7 @@ public class MainGA {
         return settings;
     }
 
-    private static Population<PointChromosome> buildAndEvolvePopupation(Settings<PointChromosome> settings, HillClimbingCanvas canvas) {
+    private static Population<PointChromosome> buildAndEvolvePopupation(Settings<PointChromosome> settings, HillClimbingDrawer canvas) {
         Population<PointChromosome> p = new Population<>(settings);
         p.addPopulationListener(canvas);
         p.init();
