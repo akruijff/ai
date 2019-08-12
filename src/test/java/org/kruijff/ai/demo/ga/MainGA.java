@@ -28,13 +28,17 @@
  */
 package org.kruijff.ai.demo.ga;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.random;
 import static java.lang.Math.sin;
+import static java.lang.String.format;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import javax.swing.JSlider;
 import org.kruijff.ai.ga.Chromosome;
 import org.kruijff.ai.ga.Population;
 import org.kruijff.ai.ga.Settings;
@@ -50,12 +54,50 @@ public class MainGA {
 
     public static void main(String[] args) {
         Settings<PointChromosome> settings = getSettings();
-        CanvasFrame frame = new CanvasFrame();
-        HillClimbingDrawer canvas = new HillClimbingDrawer(frame);
-        frame.setVisible(true);
-        Population<PointChromosome> best = buildAndEvolvePopupation(settings, canvas);
+        JSlider delaySlider = createDelaySlider();
+        CanvasFrame frame = createFrame(settings, delaySlider);
+
+        HillClimbingDrawer drawer = new HillClimbingDrawer(frame);
+        Population<PointChromosome> best = buildAndEvolvePopupation(settings, drawer);
         System.out.println("Evolution count: " + settings.getEvolutionCount());
         System.out.println("Best chromosone: " + best.getBest());
+    }
+
+    private static JSlider createDelaySlider() {
+        JSlider delaySlider = new JSlider(0, 2000, 500);
+        delaySlider.setMajorTickSpacing(1000);
+        delaySlider.setMinorTickSpacing(100);
+        delaySlider.setPaintTicks(true);
+        delaySlider.setPaintLabels(true);
+        return delaySlider;
+    }
+
+    private static CanvasFrame createFrame(Settings settings, JSlider delaySlider) {
+        CanvasFrame frame = new CanvasFrame();
+        frame.addControl(delaySlider);
+        frame.canvas().addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                mouseMotion(e);
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mouseMotion(e);
+            }
+
+            private void mouseMotion(MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+                double fitness = 0;
+                int n = settings.getEvolutionCount();
+                frame.canvas().setStatus(format("(%d, %d) = %.2f {%d}", x, y, fitness, n));
+                frame.invalidate();
+            }
+        });
+        frame.pack();
+        frame.setVisible(true);
+        return frame;
     }
 
     private static Settings<PointChromosome> getSettings() {
