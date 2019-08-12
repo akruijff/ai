@@ -18,15 +18,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>1.3</version>
+            <groupId>org.kruijff</groupId>
+            <artifactId>SwingUtil</artifactId>
+            <version>0.1</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>3.0.0</version>
         </dependency>
     </dependencies>
 
